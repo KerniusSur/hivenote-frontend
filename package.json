@@ -2,7 +2,6 @@
 	"name": "hivenote",
 	"version": "0.0.1",
 	"private": true,
-	"type": "module",
 	"dependencies": {
 		"@emotion/react": "^11.11.3",
 		"@emotion/styled": "^11.11.0",
@@ -30,6 +29,7 @@
 	},
 	"scripts": {
 		"dev": "vite",
+		"start": "vite",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
 		"lint": "npx prettier --write . ",
