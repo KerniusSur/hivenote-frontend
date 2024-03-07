@@ -41,29 +41,29 @@ const HomePage = () => {
             problem. Avoid using verbose words or phrases.
           </Typography>
           <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            gap: "24px",
-          }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              gap: "24px",
+            }}
           >
-              <HiveButton
-                variant="contained"
-                text="Get started"
-                sx={{
-                  padding: "12px 24px",
-                  maxWidth: "152px",
-                }}
-              />
-              <HiveButton
-                variant="outlined"
-                text="Learn more"
-                sx={{
-                  padding: "12px 24px",
-                  maxWidth: "152px",
-                }}
-              />
+            <HiveButton
+              variant="contained"
+              text="Get started"
+              sx={{
+                padding: "12px 24px",
+                maxWidth: "152px",
+              }}
+            />
+            <HiveButton
+              variant="outlined"
+              text="Learn more"
+              sx={{
+                padding: "12px 24px",
+                maxWidth: "152px",
+              }}
+            />
           </Box>
         </Box>
         <Box

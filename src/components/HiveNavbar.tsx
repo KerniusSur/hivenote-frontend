@@ -1,24 +1,20 @@
 import { Box } from "@mui/material";
 
-interface HiveNavbarProps {
-
-}
+interface HiveNavbarProps {}
 
 const HiveNavbar = (props: HiveNavbarProps) => {
-return (
+  return (
     <Box
-    sx={{
+      sx={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-    }}
+      }}
     >
-        <Box>
-            
-        </Box>
+      <Box></Box>
     </Box>
-)
-}
+  );
+};
 
 export default HiveNavbar;

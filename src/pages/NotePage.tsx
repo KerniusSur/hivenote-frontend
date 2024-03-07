@@ -5,11 +5,10 @@ interface NotePageProps {}
 
 const NotePage = (props: NotePageProps) => {
   const { noteId } = useParams();
+
   return (
     <Box>
-      <Box>
-        
-      </Box>
+      <Box></Box>
     </Box>
   );
 };

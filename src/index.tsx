@@ -1,14 +1,33 @@
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import AppTheme from "./AppTheme";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ThemeProvider } from "@emotion/react";
 import PublicLayout from "layouts/PublicLayout";
 import HomePage from "pages/HomePage";
-import { ThemeProvider } from "@emotion/react";
 import RegisterLoginPage from "pages/RegisterLoginPage";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AppTheme from "./AppTheme";
+import "./index.css";
+import RequireAuth from "utils/RequireAuth";
 
 const root = createRoot(document.querySelector("#root")!);
-root.render(<App />);
+root.render(
+  <>
+    <App />
+    <ToastContainer
+      closeOnClick
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      rtl={false}
+      theme="dark"
+    />
+  </>
+);
 
 function App() {
   return (
@@ -21,7 +40,11 @@ function App() {
                 <Route
                   key={component.path}
                   path={component.path}
-                  element={component.element}
+                  element={
+                    <RequireAuth access={component.access}>
+                      {component.element}
+                    </RequireAuth>
+                  }
                 />
               ))}
             </Route>
@@ -40,17 +63,17 @@ export const layouts: PathGroup[] = [
       {
         path: "",
         element: <HomePage />,
-        access: [],
+        access: undefined,
       },
       {
         path: "login",
         element: <RegisterLoginPage />,
-        access: [],
+        access: undefined,
       },
       {
         path: "register",
         element: <RegisterLoginPage isRegisterPage />,
-        access: [],
+        access: undefined,
       },
     ],
   },
@@ -78,7 +101,7 @@ export interface PathItem {
   menuLabel?: string;
   menuIcon?: JSX.Element;
   activeMenuIcon?: JSX.Element;
-  access: string[];
+  access?: "USER" | "ADMIN" | "SUPER_ADMIN";
 }
 
 export const getAllPublicMenuItems = () =>

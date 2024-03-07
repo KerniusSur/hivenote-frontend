@@ -24,10 +24,12 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
     };
     if (isRegisterPage) {
       await authAPI.current.register(request);
+      navigate("/");
       return;
     }
 
     await authAPI.current.login(request);
+    navigate("/");
   };
 
   const { isRegisterPage } = props;
