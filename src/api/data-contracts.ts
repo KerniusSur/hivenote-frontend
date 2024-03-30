@@ -9,6 +9,66 @@
  * ---------------------------------------------------------------
  */
 
+export interface NoteUpdateRequest {
+  /** @format uuid */
+  id: string;
+  type?: string;
+  title: string;
+  coverUrl?: string;
+  isArchived?: boolean;
+  isDeleted?: boolean;
+}
+
+export interface AccountPublicResponse {
+  /** @format uuid */
+  id: string;
+  name?: string;
+  lastName?: string;
+  email: string;
+  phoneNumber?: string;
+}
+
+export interface CommentResponse {
+  /** @format uuid */
+  id?: string;
+  body?: string;
+  /** @format int32 */
+  noteLine?: number;
+  isResolved?: boolean;
+  account?: AccountPublicResponse;
+  parent?: CommentResponse;
+}
+
+export interface ComponentProperties {
+  title?: string;
+  isChecked?: boolean;
+  href?: string;
+  content?: string[];
+  /** @format uuid */
+  parent?: string;
+}
+
+export interface ComponentResponse {
+  /** @format uuid */
+  id?: string;
+  type?: "CHECKLIST" | "TEXT" | "IMAGE" | "LINK" | "FILE" | "VIDEO";
+  properties?: ComponentProperties;
+  parent?: ComponentResponse;
+}
+
+export interface NoteResponse {
+  /** @format uuid */
+  id?: string;
+  type?: string;
+  title?: string;
+  coverUrl?: string;
+  isArchived?: boolean;
+  isDeleted?: boolean;
+  components?: ComponentResponse[];
+  collaborators?: AccountPublicResponse[];
+  comments?: CommentResponse[];
+}
+
 export interface UpdateAccountInfoRequest {
   /** @format uuid */
   id?: string;
@@ -31,6 +91,14 @@ export interface RegisterConfirmationRequest {
 export interface UpdatePasswordRequest {
   oldPassword: string;
   newPassword: string;
+}
+
+export interface NoteCreateRequest {
+  type?: string;
+  title?: string;
+  coverUrl?: string;
+  isArchived?: boolean;
+  isDeleted?: boolean;
 }
 
 export interface RegisterRequest {

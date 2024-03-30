@@ -89,7 +89,7 @@ export const layouts: PathGroup[] = [
     path: "",
     paths: [
       {
-        path: "note",
+        path: "note/:noteId",
         element: <NotePage />,
         access: "USER",
       },

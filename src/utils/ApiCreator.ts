@@ -1,5 +1,6 @@
 import { Account } from "api/Account";
 import { Auth } from "api/Auth";
+import { Note } from "api/Note";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "utils";
@@ -29,6 +30,12 @@ export const createApi = (type: string): any => {
       returnValue = new Account({ baseURL: getBaseUrl() });
       break;
     }
+
+    case "note": {
+      returnValue = new Note({ baseURL: getBaseUrl() });
+      break;
+    }
+
     default: {
       console.error("could not find api with type:", type);
       break;
