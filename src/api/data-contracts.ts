@@ -33,6 +33,14 @@ export interface UpdatePasswordRequest {
   newPassword: string;
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+  lastName: string;
+  phoneNumber?: string;
+}
+
 export interface EmailPasswordLoginRequest {
   email: string;
   password: string;
@@ -46,8 +54,6 @@ export interface MeResponse {
   lastName?: string;
   email?: string;
   phoneNumber?: string;
-  isActive?: boolean;
-  isEmailConfirmed?: boolean;
   availableRoles?: RoleResponse[];
 }
 

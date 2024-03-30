@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { Auth } from "api/Auth";
-import { EmailPasswordLoginRequest } from "api/data-contracts";
+import { EmailPasswordLoginRequest, RegisterRequest } from "api/data-contracts";
 import GoogleLogo from "assets/google-logo.svg";
 import HiveButton from "components/HiveButton";
 import HiveInput from "components/HiveInput";
@@ -18,17 +18,31 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
   const authAPI = useRef(createApi("auth") as Auth);
 
   const handleSubmit = async (values: AuthFormValues) => {
-    const request: EmailPasswordLoginRequest = {
-      email: values.email,
-      password: values.password,
-    };
     if (isRegisterPage) {
+      if (!values.name || !values.lastName || !values.phoneNumber) {
+        return;
+      }
+
+      const request: RegisterRequest = {
+        email: values.email,
+        password: values.password,
+        name: values.name,
+        lastName: values.lastName,
+        phoneNumber: values.phoneNumber,
+      };
+
       await authAPI.current.register(request);
+      window.location.reload();
       navigate("/");
       return;
     }
 
+    const request: EmailPasswordLoginRequest = {
+      email: values.email,
+      password: values.password,
+    };
     await authAPI.current.login(request);
+    window.location.reload();
     navigate("/");
   };
 
@@ -134,7 +148,7 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
         </Box>
         <Formik
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          validationSchema={getValidationSchema(isRegisterPage)}
           onSubmit={(values, actions) => {
             handleSubmit(values);
           }}
@@ -150,6 +164,18 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
           >
             <HiveInput name="email" placeholder="Email" />
             <HiveInput name="password" type="password" placeholder="Password" />
+            {isRegisterPage && (
+              <>
+                <HiveInput
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Confirm Password"
+                />
+                <HiveInput name="name" placeholder="First Name" />
+                <HiveInput name="lastName" placeholder="Last Name" />
+                <HiveInput name="phoneNumber" placeholder="Phone Number" />
+              </>
+            )}
             <HiveButton
               variant="contained"
               text={isRegisterPage ? "Sign up" : "Log in"}
@@ -172,16 +198,39 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
 interface AuthFormValues {
   email: string;
   password: string;
+  name?: string;
+  confirmPassword?: string;
+  lastName?: string;
+  phoneNumber?: string;
 }
 
 const initialValues: AuthFormValues = {
   email: "",
   password: "",
+  name: "",
+  confirmPassword: "",
+  lastName: "",
+  phoneNumber: "",
 };
 
-const validationSchema = yup.object({
-  email: yup.string().email("Invalid email address").required("Required"),
-  password: yup.string().required("Required"),
-});
+const getValidationSchema = (isRegisterPage?: boolean) => {
+  if (isRegisterPage) {
+    return yup.object({
+      email: yup.string().email("Invalid email address").required("Required"),
+      password: yup.string().required("Required"),
+      confirmPassword: yup
+        .string()
+        .oneOf([yup.ref("password")], "Passwords must match"),
+      name: yup.string().required("Required"),
+      lastName: yup.string().required("Required"),
+      phoneNumber: yup.string().required("Required"),
+    });
+  }
+
+  return yup.object({
+    email: yup.string().email("Invalid email address").required("Required"),
+    password: yup.string().required("Required"),
+  });
+};
 
 export default RegisterLoginPage;

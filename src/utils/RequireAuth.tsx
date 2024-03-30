@@ -26,7 +26,7 @@ const RequireAuth = (props: RequireAuthProps) => {
       window.location.pathname.includes("/register"));
 
   if (isAlreadyLoggedIn()) {
-    return <Navigate replace to="/" />;
+    return <Navigate replace to="" />;
   }
 
   if (!authStore.isStateReady) {

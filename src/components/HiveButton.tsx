@@ -17,6 +17,11 @@ const HiveButton = (props: HiveButtonProps) => {
         display: "flex",
         alignItems: "center",
         gap: "12px",
+        padding: props.compact
+          ? props.variant === "outlined"
+            ? "7px 19px"
+            : "8px 20px"
+          : "12px 24px",
       }}
       {...other}
     >
@@ -28,7 +33,6 @@ const HiveButton = (props: HiveButtonProps) => {
             props.variant === "contained"
               ? AppTheme.palette.white
               : AppTheme.palette.black,
-          padding: props.compact ? "8px 20px" : "12px 24px",
         }}
       >
         {props.text}

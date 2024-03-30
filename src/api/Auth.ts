@@ -13,13 +13,12 @@ import {
   EmailPasswordLoginRequest,
   MeResponse,
   RegisterConfirmationRequest,
+  RegisterRequest,
   UpdatePasswordRequest,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Auth<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -27,10 +26,7 @@ export class Auth<
    * @name RegisterConfirmation
    * @request PUT:/api/v1/public/auth/register/confirm
    */
-  registerConfirmation = (
-    data: RegisterConfirmationRequest,
-    params: RequestParams = {}
-  ) =>
+  registerConfirmation = (data: RegisterConfirmationRequest, params: RequestParams = {}) =>
     this.request<void, any>({
       path: `/api/v1/public/auth/register/confirm`,
       method: "PUT",
@@ -60,7 +56,7 @@ export class Auth<
    * @name Register
    * @request POST:/api/v1/public/auth/register
    */
-  register = (data: EmailPasswordLoginRequest, params: RequestParams = {}) =>
+  register = (data: RegisterRequest, params: RequestParams = {}) =>
     this.request<void, any>({
       path: `/api/v1/public/auth/register`,
       method: "POST",
@@ -72,12 +68,12 @@ export class Auth<
    * No description
    *
    * @tags auth-controller
-   * @name Logoff
-   * @request POST:/api/v1/public/auth/logoff
+   * @name Logout
+   * @request POST:/api/v1/public/auth/logout
    */
-  logoff = (params: RequestParams = {}) =>
+  logout = (params: RequestParams = {}) =>
     this.request<void, any>({
-      path: `/api/v1/public/auth/logoff`,
+      path: `/api/v1/public/auth/logout`,
       method: "POST",
       ...params,
     });

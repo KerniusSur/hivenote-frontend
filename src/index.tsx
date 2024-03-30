@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import AppTheme from "./AppTheme";
 import "./index.css";
 import RequireAuth from "utils/RequireAuth";
+import DefaultPage from "pages/DefaultPage";
+import NotePage from "pages/NotePage";
 
 const root = createRoot(document.querySelector("#root")!);
 root.render(
@@ -61,7 +63,7 @@ export const layouts: PathGroup[] = [
     path: "",
     paths: [
       {
-        path: "",
+        path: "home",
         element: <HomePage />,
         access: undefined,
       },
@@ -75,12 +77,23 @@ export const layouts: PathGroup[] = [
         element: <RegisterLoginPage isRegisterPage />,
         access: undefined,
       },
+      {
+        path: "",
+        element: <DefaultPage />,
+        access: "USER",
+      },
     ],
   },
   {
-    layout: <></>,
+    layout: <PublicLayout />,
     path: "",
-    paths: [],
+    paths: [
+      {
+        path: "note",
+        element: <NotePage />,
+        access: "USER",
+      },
+    ],
   },
   {
     layout: <></>,

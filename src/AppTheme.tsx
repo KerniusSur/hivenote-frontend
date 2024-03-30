@@ -16,6 +16,10 @@ const AppTheme = createTheme({
             backgroundColor: "#000000",
             background: "#000000",
             padding: "12px 24px",
+            "&:hover": {
+              opacity: 0.8,
+              transition: "all 0.3s ease-in-out",
+            },
           },
         },
         {
