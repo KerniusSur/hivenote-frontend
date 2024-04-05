@@ -6,11 +6,11 @@
 }
 
 .ce-block__content {
-    max-width: none;
+  max-width: none;
 }
 
 .ce-toolbar__content {
-    max-width: calc(100% - 192px);
+  max-width: calc(100% - 192px);
 }
 
 #react-editor-js {
@@ -19,5 +19,5 @@
 
 .editor {
   margin: 0px;
-  padding: 0px;  
+  padding: 0px;
 }

@@ -1,0 +1,15 @@
+enum CLIENT_EVENT {
+  FETCH_NOTE = "FETCH_NOTE",
+  UPDATE_NOTE = "UPDATE_NOTE",
+}
+
+enum SERVER_EVENT {
+  RETURN_NOTE = "RETURN_NOTE",
+}
+
+const NOTE = {
+  CLIENT_EVENT,
+  SERVER_EVENT,
+};
+
+export default NOTE;

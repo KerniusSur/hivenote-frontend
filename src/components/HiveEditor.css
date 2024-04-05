@@ -16,7 +16,8 @@ body {
   margin-bottom: 20px;
 }
 
-.ce-toolbar__content, .ce-block__content {
+.ce-toolbar__content,
+.ce-block__content {
   max-width: unset;
   width: 92% !important;
 }

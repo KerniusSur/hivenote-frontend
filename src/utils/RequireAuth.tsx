@@ -27,15 +27,26 @@ const RequireAuth = (props: RequireAuthProps) => {
   useEffect(() => {
     if (tag === "note-page") {
       const noteId = location.pathname.split("/")[2];
-      if (
-        !socketStore.isSocketConnected ||
-        (socketStore.isSocketConnected && socketStore.noteId !== noteId)
-      ) {
-        socketStore.init(noteId);
+      if (noteId !== socketStore.note?.id) {
+        socketStore.joinRoom(noteId);
       }
+
+      if (socketStore.note?.id) {
+        socketStore.leaveRoom(socketStore.note.id);
+      }
+
+      // if (!socketStore.socket?.connected) {
+      // socketStore.init(noteId);
+      //   return;
+      // }
+
+      // if (socketStore.socket?.connected && socketStore.note?.id !== noteId) {
+      //   socketStore.socket.disconnect();
+      //   socketStore.init(noteId);
+      // }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, [location, location.pathname, socketStore.socket?.connected]);
 
   const isAlreadyLoggedIn = () =>
     authStore.account &&

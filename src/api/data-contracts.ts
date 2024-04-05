@@ -38,13 +38,24 @@ export interface CommentResponse {
   parent?: CommentResponse;
 }
 
+export interface ComponentItems {
+  text?: string;
+  checked?: boolean;
+}
+
 export interface ComponentProperties {
   title?: string;
-  isChecked?: boolean;
-  href?: string;
-  content?: string[];
-  /** @format uuid */
-  parent?: string;
+  text?: string;
+  /** @format int32 */
+  level?: number;
+  items?: object;
+  message?: string;
+  alignment?: string;
+  caption?: string;
+  html?: string;
+  link?: string;
+  itemsList?: ComponentItems[];
+  itemsString?: string[];
 }
 
 export interface ComponentResponse {

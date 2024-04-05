@@ -1,101 +1,102 @@
-import { EditorBlock } from "pages/NotePage";
-import ioClient, { Socket } from "socket.io-client";
+import GENERAL_EVENT from "models/events/GeneralEvents";
+import CommentMessage from "models/message/CommentMessage";
+import ComponentMessage from "models/message/ComponentMessage";
+import NoteMessage from "models/message/NoteMessage";
+import RoomMessage from "models/message/RoomMessage";
+import { io, Socket } from "socket.io-client";
 import { getSocketBaseUrl } from "utils";
 import { create } from "zustand";
 
 interface SocketStore {
-  noteId?: string;
-  setNoteId: (noteId: string) => void;
   socket?: Socket;
-  setSocket: (socket: Socket) => void;
-  isSocketConnected: boolean;
-  setIsSocketConnected: (isSocketConnected: boolean) => void;
-  receivedMessages: any[];
-  sendMessage: (message: ClientMessage) => Promise<any>;
-  init: (noteId?: string) => void;
-  disconnect: (noteId?: string) => void;
-}
-
-export interface ClientMessage {
-  room: string;
-  type: MessageType;
-  message: string;
-  data: EditorBlock[];
-}
-
-export enum MessageType {
-  CLIENT = "CLIENT",
-  SERVER = "SERVER",
+  note: NoteMessage | undefined;
+  receivedMessages:
+    | NoteMessage[]
+    | ComponentMessage[]
+    | CommentMessage[]
+    | any[];
+  joinRoom: (room: string) => void;
+  leaveRoom: (room: string) => void;
+  // init: (noteId?: string) => void;
 }
 
 const useSocketStore = create<SocketStore>((set, get) => ({
-  noteId: undefined,
-  socket: undefined,
-  isSocketConnected: false,
+  socket: io(getSocketBaseUrl(), {
+    autoConnect: true,
+  }),
   receivedMessages: [],
-  setNoteId: (noteId: string) => {
-    set({ noteId });
-  },
-  setSocket: (socket: Socket) => {
-    set({ socket });
-  },
-  setIsSocketConnected: (isSocketConnected: boolean) => {
-    set({ isSocketConnected });
-  },
-  sendMessage: async (message: ClientMessage) => {
-    const { socket } = get();
-    const response = await socket?.emitWithAck("send_message", message);
-    return response;
-  },
-  init: (noteId?: string) => {
-    if (!noteId) {
-      noteId = window.location.pathname.split("/")[2];
-    }
-    set({ noteId });
+  note: undefined,
+  joinRoom: async (room: string) => {
+    const message: RoomMessage = {
+      room,
+      isJoining: true,
+    };
 
-    if (get().isSocketConnected && get().noteId !== noteId) {
-      get().disconnect();
-    }
-
-    const socketUrl = getSocketBaseUrl(noteId);
-    const socket = ioClient(socketUrl, {
-      autoConnect: false,
-      closeOnBeforeunload: true,
-    });
-    socket
-      .on("connect", () => {
-        console.log("Connected to socket");
-        set({ isSocketConnected: true });
-      })
-      .on("disconnect", () => {
-        console.log("Disconnected from socket");
-        set({ isSocketConnected: false });
-      })
-      .on("get_message", (message: any) => {
-        console.log("Received message", message);
-        set({ receivedMessages: [...get().receivedMessages, message] });
-      });
-
-    socket.open();
-
-    if (socket.connected) {
-      set({ isSocketConnected: true });
-    }
-
-    set({ socket });
+    await get().socket?.emitWithAck(GENERAL_EVENT.ROOM_REQUEST, message);
   },
-  disconnect: () => {
-    const { socket } = get();
-    socket?.off("connect");
-    socket?.off("disconnect");
-    socket?.off("get_message");
-    socket?.disconnect();
+  leaveRoom: async (room: string) => {
+    const message: RoomMessage = {
+      room,
+      isJoining: false,
+    };
 
-    set({ noteId: undefined });
-    set({ socket: undefined });
-    set({ isSocketConnected: false });
-    set({ receivedMessages: [] });
+    await get().socket?.emitWithAck(GENERAL_EVENT.ROOM_REQUEST, message);
   },
+
+  // init: async (noteId?: string) => {
+  //   if (!noteId) {
+  //     noteId = window.location.pathname.split("/")[2];
+  //   }
+
+  //   let socket = get().socket;
+  //   if (!socket) {
+  //     const socketUrl = getSocketBaseUrl(noteId);
+  //     socket = io(socketUrl, {
+  //       autoConnect: false,
+  //     });
+  //   }
+
+  //   socket
+  //     .on(GENERAL_EVENT.CONNECT, () => {
+  //       console.log("Connected to socket");
+  //       const location = useLocation();
+  //       if (location.pathname.includes("/note")) {
+  //         const noteId = location.pathname.split("/")[2];
+  //         const roomMessage: RoomMessage = {
+  //           room: noteId,
+
+  //         }
+  //         socket.emit(GENERAL_EVENT.ROOM_REQUEST, noteId);
+  //       }
+
+  //       socket.on("disconnect", () => {
+  //         // socket.rooms === {}
+  //       });
+  //     })
+  //     .on(GENERAL_EVENT.DISCONNECT, () => {
+  //       console.log("Disconnected from socket");
+  //     })
+  //     .on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
+  //       console.log("NOTE.SERVER_EVENT.RETURN_FETCHED", message);
+  //       set({ note: message });
+  //       set({ receivedMessages: [...get().receivedMessages, message] });
+  //     })
+  //     .on(
+  //       COMPONENT.SERVER_EVENT.RETURN_COMPONENT,
+  //       (message: ComponentMessage) => {
+  //         console.log("COMPONENT.SERVER_EVENT.RETURN_FETCHED", message);
+  //         set({ receivedMessages: [...get().receivedMessages, message] });
+  //       }
+  //     )
+  //     .on(COMMENT.SERVER_EVENT.RETURN_COMMENT, (message: CommentMessage) => {
+  //       console.log("COMMENT.SERVER_EVENT.RETURN_UPDATED", message);
+  //       set({ receivedMessages: [...get().receivedMessages, message] });
+  //     });
+
+  //   socket.open();
+
+  //   set({ socket });
+  // },
 }));
 
 export default useSocketStore;

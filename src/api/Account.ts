@@ -9,10 +9,15 @@
  * ---------------------------------------------------------------
  */
 
-import { PasswordUpdateRequest, UpdateAccountInfoRequest } from "./data-contracts";
+import {
+  PasswordUpdateRequest,
+  UpdateAccountInfoRequest,
+} from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Account<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+export class Account<
+  SecurityDataType = unknown,
+> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -20,7 +25,10 @@ export class Account<SecurityDataType = unknown> extends HttpClient<SecurityData
    * @name UpdateAccountInfo
    * @request PUT:/api/v1/user/account
    */
-  updateAccountInfo = (data: UpdateAccountInfoRequest, params: RequestParams = {}) =>
+  updateAccountInfo = (
+    data: UpdateAccountInfoRequest,
+    params: RequestParams = {}
+  ) =>
     this.request<void, any>({
       path: `/api/v1/user/account`,
       method: "PUT",

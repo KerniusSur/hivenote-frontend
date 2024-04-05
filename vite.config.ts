@@ -9,6 +9,7 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
+        ws: true,
       },
     },
     port: 4000,
@@ -22,6 +23,8 @@ export default defineConfig({
       utils: path.resolve(__dirname, "./src/utils"),
       assets: path.resolve(__dirname, "./src/assets"),
       layouts: path.resolve(__dirname, "./src/layouts"),
+      models: path.resolve(__dirname, "./src/models"),
+      hooks: path.resolve(__dirname, "./src/hooks"),
       AppTheme: path.resolve(__dirname, "./src/AppTheme.tsx"),
     },
   },
