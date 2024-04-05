@@ -1,0 +1,14 @@
+enum CLIENT_EVENT {
+  SEND_COMMENT = "SEND_COMMENT",
+}
+
+enum SERVER_EVENT {
+  RETURN_COMMENT = "RETURN_COMMENT",
+}
+
+const COMMENT = {
+  CLIENT_EVENT,
+  SERVER_EVENT,
+};
+
+export default COMMENT;
