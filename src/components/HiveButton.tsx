@@ -12,7 +12,7 @@ const HiveButton = (props: HiveButtonProps) => {
   const { text, startIcon, endIcon, ...other } = props;
   return (
     <Button
-      fullWidth
+      fullWidth={!props.compact}
       sx={{
         display: "flex",
         alignItems: "center",

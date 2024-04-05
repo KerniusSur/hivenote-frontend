@@ -6,6 +6,6 @@ export const getBaseUrl = () =>
 export const getSocketBaseUrl = (noteId) =>
   (process.env.NODE_ENV === "production"
     ? "hivenote.lol"
-    : "192.168.0.173:8085") +
+    : "192.168.0.173:9092") +
   "?room=" +
   noteId;

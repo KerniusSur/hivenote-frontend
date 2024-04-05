@@ -43,7 +43,7 @@ function App() {
                   key={component.path}
                   path={component.path}
                   element={
-                    <RequireAuth access={component.access}>
+                    <RequireAuth access={component.access} tag={component.tag}>
                       {component.element}
                     </RequireAuth>
                   }
@@ -63,25 +63,28 @@ export const layouts: PathGroup[] = [
     path: "",
     paths: [
       {
-        path: "home",
+        path: "",
         element: <HomePage />,
         access: undefined,
+        tag: "home-page",
       },
       {
         path: "login",
         element: <RegisterLoginPage />,
         access: undefined,
+        tag: "login-page",
       },
       {
         path: "register",
         element: <RegisterLoginPage isRegisterPage />,
         access: undefined,
+        tag: "register-page",
       },
-      {
-        path: "",
-        element: <DefaultPage />,
-        access: "USER",
-      },
+      // {
+      //   path: "",
+      //   element: <DefaultPage />,
+      //   access: "USER",
+      // },
     ],
   },
   {
@@ -92,6 +95,7 @@ export const layouts: PathGroup[] = [
         path: "note/:noteId",
         element: <NotePage />,
         access: "USER",
+        tag: "note-page",
       },
     ],
   },
@@ -115,6 +119,7 @@ export interface PathItem {
   menuIcon?: JSX.Element;
   activeMenuIcon?: JSX.Element;
   access?: "USER" | "ADMIN" | "SUPER_ADMIN";
+  tag: string;
 }
 
 export const getAllPublicMenuItems = () =>

@@ -1,11 +1,14 @@
+import { VisibilityOffRounded, VisibilityRounded } from "@mui/icons-material";
 import {
   Box,
+  IconButton,
   InputAdornment,
   OutlinedTextFieldProps,
   TextField,
   Typography,
 } from "@mui/material";
 import { useField } from "formik";
+import { useState } from "react";
 
 interface HiveInputProps extends OutlinedTextFieldProps {
   name: string;
@@ -17,6 +20,11 @@ interface HiveInputProps extends OutlinedTextFieldProps {
 const HiveInput = (props: HiveInputProps) => {
   const { name, title, startIcon, endIcon, ...other } = props;
   const [field, meta, helpers] = useField(props.name);
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
   return (
     <Box
       sx={{
@@ -48,9 +56,29 @@ const HiveInput = (props: HiveInputProps) => {
         }}
         InputProps={{
           ...getInputProps(props.startIcon, props.endIcon),
+          endAdornment: props.type === "password" && (
+            <IconButton
+              sx={{
+                "&:hover": {
+                  cursor: "pointer",
+                },
+                marginRight: "-8px",
+              }}
+              onClick={togglePasswordVisibility}
+            >
+              {isPasswordVisible ? (
+                <VisibilityRounded />
+              ) : (
+                <VisibilityOffRounded />
+              )}
+            </IconButton>
+          ),
         }}
-        {...field}
         {...other}
+        {...field}
+        type={
+          props.type === "password" && isPasswordVisible ? "text" : props.type
+        }
       />
       {meta.touched && meta.error && (
         <Typography variant="body4" color="#EB0E0E">

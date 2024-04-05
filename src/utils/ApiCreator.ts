@@ -1,6 +1,6 @@
 import { Account } from "api/Account";
 import { Auth } from "api/Auth";
-import { Note } from "api/Note";
+import { Notes } from "api/Notes";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "utils";
@@ -32,7 +32,7 @@ export const createApi = (type: string): any => {
     }
 
     case "note": {
-      returnValue = new Note({ baseURL: getBaseUrl() });
+      returnValue = new Notes({ baseURL: getBaseUrl() });
       break;
     }
 

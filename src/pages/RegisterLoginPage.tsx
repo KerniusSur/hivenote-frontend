@@ -19,7 +19,7 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
 
   const handleSubmit = async (values: AuthFormValues) => {
     if (isRegisterPage) {
-      if (!values.name || !values.lastName || !values.phoneNumber) {
+      if (!values.name || !values.lastName) {
         return;
       }
 
@@ -28,12 +28,10 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
         password: values.password,
         name: values.name,
         lastName: values.lastName,
-        phoneNumber: values.phoneNumber,
       };
 
       await authAPI.current.register(request);
-      window.location.reload();
-      navigate("/");
+      window.location.href = "/";
       return;
     }
 
@@ -42,8 +40,7 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
       password: values.password,
     };
     await authAPI.current.login(request);
-    window.location.reload();
-    navigate("/");
+    window.location.href = "/";
   };
 
   const { isRegisterPage } = props;
@@ -173,7 +170,6 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
                 />
                 <HiveInput name="name" placeholder="First Name" />
                 <HiveInput name="lastName" placeholder="Last Name" />
-                <HiveInput name="phoneNumber" placeholder="Phone Number" />
               </>
             )}
             <HiveButton
@@ -201,7 +197,6 @@ interface AuthFormValues {
   name?: string;
   confirmPassword?: string;
   lastName?: string;
-  phoneNumber?: string;
 }
 
 const initialValues: AuthFormValues = {
@@ -210,7 +205,6 @@ const initialValues: AuthFormValues = {
   name: "",
   confirmPassword: "",
   lastName: "",
-  phoneNumber: "",
 };
 
 const getValidationSchema = (isRegisterPage?: boolean) => {
@@ -223,7 +217,6 @@ const getValidationSchema = (isRegisterPage?: boolean) => {
         .oneOf([yup.ref("password")], "Passwords must match"),
       name: yup.string().required("Required"),
       lastName: yup.string().required("Required"),
-      phoneNumber: yup.string().required("Required"),
     });
   }
 

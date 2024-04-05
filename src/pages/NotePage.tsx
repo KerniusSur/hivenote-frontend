@@ -1,15 +1,20 @@
-import { Box, Typography } from "@mui/material";
-import { Note } from "api/Note";
+import { Box, Input, Typography } from "@mui/material";
+import {
+  AccountPublicResponse,
+  CommentResponse,
+  NoteResponse,
+} from "api/data-contracts";
+import { Notes } from "api/Notes";
 import HiveEditor from "components/HiveEditor";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+// import { io, Socket } from "socket.io-client";
+import { getSocketBaseUrl } from "utils";
 import { createApi } from "utils/ApiCreator";
+import useNoteStore from "utils/NoteStore";
 import "../components/HiveEditor.css";
 import "./Editor.css";
-// import { socket } from "../socket";
-import { ContactSupport, ContactSupportOutlined } from "@mui/icons-material";
-import { io, Socket } from "socket.io-client";
-import { getSocketBaseUrl } from "utils";
+import useSocketStore, { ClientMessage, MessageType } from "utils/SocketStore";
 
 interface NotePageProps {}
 
@@ -38,7 +43,7 @@ const INITIAL_DATA = {
   ],
 };
 
-interface EditorBlock {
+export interface EditorBlock {
   id?: string;
   type: EditorComponentTypes | string;
   data: {
@@ -54,7 +59,7 @@ interface EditorBlock {
   };
 }
 
-type EditorComponentTypes = [
+export type EditorComponentTypes = [
   "header",
   "paragraph",
   "list",
@@ -63,97 +68,229 @@ type EditorComponentTypes = [
   "link",
 ];
 
-interface EditorData {
+export interface EditorData {
   time: number;
   blocks: EditorBlock[];
   version?: string;
 }
 
-interface NoteDataItem {
+export interface NoteDataItem {
   text?: string;
   checked?: boolean;
 }
 
+export interface OtherNoteData {
+  id?: string;
+  title?: string;
+  coverUrl?: string;
+  comments?: CommentResponse[];
+  collaborators?: AccountPublicResponse[];
+  isArchived?: boolean;
+  isDeleted?: boolean;
+}
+
 const NotePage = (props: NotePageProps) => {
   const { noteId } = useParams();
-  const socket = useRef<Socket | null>(null);
 
-  const [data, setData] = useState<EditorData>(INITIAL_DATA);
-  // const [data, setData] = useState<any>(INITIAL_DATA);
-  const [isConnected, setIsConnected] = useState(
-    socket.current?.connected || false
-  );
+  const noteAPI = useRef(createApi("note") as Notes);
+  const { socket, isSocketConnected, sendMessage } = useSocketStore();
+  const { setHasUpdates } = useNoteStore();
 
-  const noteAPI = useRef(createApi("note") as Note);
+  // const [components, setComponents] = useState<any>(INITIAL_DATA);
+  const [components, setComponents] = useState<EditorData>(INITIAL_DATA);
+  const [otherNoteData, setOtherNoteData] = useState<
+    OtherNoteData | undefined
+  >();
+  const [note, setNote] = useState<NoteResponse | undefined>();
+  // const [isConnected, setIsConnected] = useState(
+  //   socketRef.current?.connected || false
+  // );
+  const [isSaving, setIsSaving] = useState(false);
+  // const [socket, setSocket] = useState<Socket | null>(null);
 
-  const handleDataChange = (data: EditorData) => {
+  useEffect(() => {
+    getNote();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteId]);
+
+  const getNote = async () => {
+    if (!noteId) return;
+    const response = await noteAPI.current.findById(noteId);
+    setNote(response);
+    const otherData: OtherNoteData = {
+      id: response.id,
+      title: response.title,
+      coverUrl: response.coverUrl,
+      comments: response.comments,
+      collaborators: response.collaborators,
+      isArchived: response.isArchived,
+      isDeleted: response.isDeleted,
+    };
+    // const socketURL = getSocketBaseUrl(noteId);
+    // console.log("Socket URL: ", socketURL);
+    // const newSocket = io(socketURL, {
+    //   autoConnect: true,
+    // });
+    // newSocket.open();
+    // setSocket(newSocket);
+
+    setOtherNoteData(otherData);
+  };
+
+  const updateNote = async () => {
+    if (
+      !noteId ||
+      !otherNoteData?.title ||
+      (otherNoteData.title === note?.title &&
+        otherNoteData.coverUrl === note?.coverUrl)
+    )
+      return;
+    const response = await noteAPI.current.update({
+      id: noteId,
+      title: otherNoteData?.title,
+      coverUrl: otherNoteData?.coverUrl,
+      isArchived: otherNoteData?.isArchived,
+      isDeleted: otherNoteData?.isDeleted,
+    });
+    setHasUpdates(true);
+  };
+
+  useEffect(() => {
+    if (!otherNoteData) return;
+    updateNote();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otherNoteData?.title, otherNoteData?.coverUrl]);
+
+  const handleDataChange = async (data: EditorData) => {
     console.log("Data changed: ", data.blocks);
-    setData(data);
+    console.log("isSocketConnected: ", isSocketConnected);
+    console.log("Socket: ", socket);
+    setIsSaving(true);
+    setComponents(data);
 
-    if (!socket.current || socket.current.disconnected) {
-      console.log("Not connected to server");
+    if (!noteId) {
+      console.error("Note ID not found");
       return;
     }
 
-    const message = {
+    const message: ClientMessage = {
       room: noteId,
-      type: "CLIENT",
+      type: MessageType.CLIENT,
       message: "Note data changed",
       data: data.blocks,
     };
 
-    console.log("Sending message: ", message);
+    if (socket && socket.connected) {
+      console.log("Sending message: ", message);
+        const res  = await sendMessage(message);
+      console.log("Response: ", res);
+    }
 
-    socket.current?.emit("send_message", message);
+    // console.log("Sending message: ", message);
+    // const response = await socketRef.current?.emitWithAck(
+    //   "send_message",
+    //   message
+    // );
+    // console.log("Response: ", response);
+    // setIsSaving(false);
   };
 
   useEffect(() => {
-    if (!noteId) return;
-    const socketURL = getSocketBaseUrl(noteId);
-    const currentSocket = io(socketURL, {
-      autoConnect: true,
-    });
+    // console.log("Note ID: ", noteId);
+    // if (!noteId) return;
+    // const socketURL = getSocketBaseUrl(noteId);
+    // console.log("Socket URL: ", socketURL);
+    // socketRef.current = io(socketURL, {
+    //   autoConnect: false,
+    // });
+    // socketRef.current.connect();
 
-    socket.current = currentSocket;
+    // const onConnect = () => {
+    //   setIsConnected(true);
+    //   console.log("Connected to server");
+    // };
 
-    const onConnect = () => {
-      setIsConnected(true);
-      console.log("Connected to server");
-    };
-
-    const onDisconnect = () => {
-      setIsConnected(false);
-      console.log("Disconnected from server");
-    };
+    // const onDisconnect = () => {
+    //   setIsConnected(false);
+    //   console.log("Disconnected from server");
+    // };
 
     const onGetMessage = (data: any) => {
       console.log("Message received: ", data);
     };
 
-    currentSocket.on("connect", onConnect);
-    currentSocket.on("disconnect", onDisconnect);
-    currentSocket.on("get_message", onGetMessage);
-
-    return () => {
-      console.log("Cleanup");
-      currentSocket.off("connect", onConnect);
-      currentSocket.off("disconnect", onDisconnect);
-      currentSocket.off("get_message", onGetMessage);
-      currentSocket.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    const beforeLoad = async () => {
+      console.log("Before load event");
       if (!noteId) return;
-      // save data to server
-      event.preventDefault();
+      // setIsSaving(true);
+      const socketURL = getSocketBaseUrl(noteId);
+
+      // setIsSaving(false);
     };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
+
+    // socketRef.current.on("connect", onConnect);
+    // socketRef.current.on("disconnect", onDisconnect);
+    // socketRef.current.on("get_message", onGetMessage);
+
+    // const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+    //   console.log("Before unload event");
+    //   if (!noteId) return;
+    //   // event.preventDefault();
+
+    //   // setIsSaving(true);
+    //   const message = {
+    //     room: noteId,
+    //     type: "CLIENT",
+    //     message: "Note data changed",
+    //     data: components.blocks,
+    //   };
+    //   const response = await socketRef.current?.emitWithAck(
+    //     "send_message",
+    //     message
+    //   );
+    //   console.log("Response: ", response);
+    //   // setIsSaving(false);
+    // };
+
+    // window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // return () => {
+    //   // console.log("Cleanup");
+    //   // socketRef.current?.off("connect", onConnect);
+    //   // socketRef.current?.off("disconnect", onDisconnect);
+    //   // socketRef.current?.off("get_message", onGetMessage);
+    //   // socketRef.current?.disconnect();
+    //   window.removeEventListener("beforeunload", handleBeforeUnload);
+    // };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // useEffect(() => {
+  //   const handleBeforeUnload = async (event: BeforeUnloadEvent) => {
+  //     console.log("Before unload event");
+  //     if (!noteId) return;
+  //     event.preventDefault();
+
+  //     setIsSaving(true);
+  //     const message = {
+  //       room: noteId,
+  //       type: "CLIENT",
+  //       message: "Note data changed",
+  //       data: components.blocks,
+  //     };
+  //     const response = await socketRef.current?.emitWithAck(
+  //       "send_message",
+  //       message
+  //     );
+  //     console.log("Response: ", response);
+  //     setIsSaving(false);
+  //   };
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
     <Box
@@ -161,11 +298,33 @@ const NotePage = (props: NotePageProps) => {
         display: "flex",
         flexDirection: "column",
         gap: "24px",
-        padding: "24px",
+        padding: "48px",
         width: "100%",
         boxSizing: "border-box",
       }}
     >
+      <Input
+        id={"title-input-" + noteId}
+        placeholder="Untitled"
+        value={otherNoteData?.title !== "Untitled" ? otherNoteData?.title : ""}
+        sx={{
+          border: "none",
+          ":before": {
+            borderBottom: "none !important",
+          },
+          ":after": {
+            borderBottom: "none !important",
+          },
+          fontFamily: "Roboto, sans-serif",
+          fontSize: "40px",
+          lineHeight: "120%",
+          fontWeight: 600,
+          color: "#000000",
+        }}
+        onChange={(e) => {
+          setOtherNoteData({ ...otherNoteData, title: e.target.value });
+        }}
+      />
       <Box
         sx={{
           display: "flex",
@@ -180,15 +339,17 @@ const NotePage = (props: NotePageProps) => {
             width: "100%",
           }}
         >
-          <HiveEditor
-            data={data}
-            onChange={handleDataChange}
-            editorblock="editorjs-container"
-          />
+          {noteId && (
+            <HiveEditor
+              data={components}
+              onChange={handleDataChange}
+              editorblock={"editorjs-container"}
+            />
+          )}
         </Box>
       </Box>
       <Box>
-        {data.blocks.map((block: any, index: number) => (
+        {components.blocks.map((block: any, index: number) => (
           <Box
             key={index}
             sx={{

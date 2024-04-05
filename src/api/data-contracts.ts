@@ -12,7 +12,6 @@
 export interface NoteUpdateRequest {
   /** @format uuid */
   id: string;
-  type?: string;
   title: string;
   coverUrl?: string;
   isArchived?: boolean;
@@ -51,22 +50,22 @@ export interface ComponentProperties {
 export interface ComponentResponse {
   /** @format uuid */
   id?: string;
-  type?: "CHECKLIST" | "TEXT" | "IMAGE" | "LINK" | "FILE" | "VIDEO";
+  type?: "header" | "paragraph" | "list" | "checklist" | "image" | "link";
   properties?: ComponentProperties;
   parent?: ComponentResponse;
 }
 
 export interface NoteResponse {
   /** @format uuid */
-  id?: string;
-  type?: string;
+  id: string;
   title?: string;
   coverUrl?: string;
-  isArchived?: boolean;
-  isDeleted?: boolean;
+  isArchived: boolean;
+  isDeleted: boolean;
   components?: ComponentResponse[];
-  collaborators?: AccountPublicResponse[];
+  collaborators: AccountPublicResponse[];
   comments?: CommentResponse[];
+  children?: NoteResponse[];
 }
 
 export interface UpdateAccountInfoRequest {
@@ -85,7 +84,6 @@ export interface PasswordUpdateRequest {
 export interface RegisterConfirmationRequest {
   name: string;
   lastName: string;
-  username?: string;
 }
 
 export interface UpdatePasswordRequest {
@@ -94,11 +92,12 @@ export interface UpdatePasswordRequest {
 }
 
 export interface NoteCreateRequest {
-  type?: string;
   title?: string;
   coverUrl?: string;
   isArchived?: boolean;
   isDeleted?: boolean;
+  /** @format uuid */
+  parentId?: string;
 }
 
 export interface RegisterRequest {

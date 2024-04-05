@@ -16,3 +16,8 @@
 #react-editor-js {
   margin-top: 20px !important;
 }
+
+.editor {
+  margin: 0px;
+  padding: 0px;  
+}

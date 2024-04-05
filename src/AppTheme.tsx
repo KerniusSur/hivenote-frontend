@@ -75,6 +75,15 @@ const AppTheme = createTheme({
         },
       },
     },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#ffffff",
+          color: "#000000",
+          boxShadow: "none",
+        },
+      },
+    },
   },
   palette: {
     black: "#000000",
@@ -145,7 +154,7 @@ const AppTheme = createTheme({
       fontFamily: "Roboto, sans-serif",
       fontSize: "16px",
       lineHeight: "150%",
-      fontWeight: 400,
+      fontWeight: 450,
       color: "#000000",
     },
     body4: {
