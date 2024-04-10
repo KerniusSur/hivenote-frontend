@@ -5,6 +5,7 @@ enum ComponentTypeEnum {
   checklist = "checklist",
   image = "image",
   link = "link",
+  linkTool = "linkTool",
 }
 
 type ComponentType = keyof typeof ComponentTypeEnum;

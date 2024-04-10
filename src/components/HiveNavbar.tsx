@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { createApi } from "utils/ApiCreator";
 import useAuthStore from "utils/AuthStore";
 import useNoteStore from "utils/NoteStore";
+import useSocketStore from "utils/SocketStore";
 
 interface HiveNavbarProps {
   isDrawerOpen: boolean;
@@ -27,6 +28,7 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
   const { account, isStateReady } = useAuthStore();
   const { activeNoteId, setActiveNoteId, hasUpdates, setHasUpdates } =
     useNoteStore();
+  const { note } = useSocketStore();
   const authAPI = useRef(createApi("auth") as Auth);
   const noteAPI = useRef(createApi("note") as Notes);
   const [ownerNotes, setOwnerNotes] = useState<NoteResponse[]>([]);
@@ -45,6 +47,10 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
     }
   }, [hasUpdates, setHasUpdates]);
 
+  useEffect(() => {
+    getAllUserNotes();
+  }, [note]);
+
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
@@ -62,13 +68,9 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
     };
 
     const response = await noteAPI.current.create(noteCreateRequest);
-    // if (!parentId) {
-    // toggleDrawer();
-    // }
     toast.success("Note created successfully");
     setActiveNoteId(response.id);
     navigate(`/note/${response.id}`);
-    // window.location.href = `/note/${response.id}`;
     getAllUserNotes();
   };
 
@@ -84,9 +86,6 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
   const handleSelectNote = (noteId: string) => {
     setActiveNoteId(noteId);
     navigate(`/note/${noteId}`);
-
-    //TODO: decide whether to close the drawer after selecting a note
-    // toggleDrawer();
   };
 
   const handleDeleteNote = async (noteId: string) => {
@@ -97,8 +96,6 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
     }
     toast.success("Note deleted successfully");
     getAllUserNotes();
-
-    // toggleDrawer();
   };
 
   return (

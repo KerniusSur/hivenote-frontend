@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   server: {
     proxy: {
@@ -25,6 +24,8 @@ export default defineConfig({
       layouts: path.resolve(__dirname, "./src/layouts"),
       models: path.resolve(__dirname, "./src/models"),
       hooks: path.resolve(__dirname, "./src/hooks"),
+      config: path.resolve(__dirname, "./src/config"),
+      types: path.resolve(__dirname, "./src/types"),
       AppTheme: path.resolve(__dirname, "./src/AppTheme.tsx"),
     },
   },
@@ -33,4 +34,5 @@ export default defineConfig({
   },
   base: "./",
   plugins: [react()],
+  logLevel: "info",
 });
