@@ -16,7 +16,7 @@ const LinkedListUtil = {
   mapFromLinkedListToList: (linkedList: LinkedList<any>): any[] => {
     console.log("LinkedList: ", linkedList);
     const list: any[] = linkedList.traverse();
-  
+
     console.log("List: ", list);
     console.log("List: ", list);
 

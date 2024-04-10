@@ -22,7 +22,7 @@ const RequireAuth = (props: RequireAuthProps) => {
   };
   useEffect(() => {
     fetchAccount();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

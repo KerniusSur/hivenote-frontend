@@ -54,8 +54,7 @@ class LinkedList<T> implements ILinkedList<T> {
 
   public traverse(): T[] {
     console.log("TRAVERSE LIST");
-  
-  
+
     const array: T[] = [];
     if (!this.head) {
       console.log("List is empty");
