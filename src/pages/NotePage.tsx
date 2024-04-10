@@ -1,7 +1,6 @@
 import { Box, Input } from "@mui/material";
 import HiveEditor from "components/HiveEditor";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
-import useDebounce from "hooks/useDebounce";
 import EditorBlock from "models/editor/EditorBlock";
 import EditorData from "models/editor/EditorData";
 import NOTE from "models/events/NoteEvents";
@@ -24,11 +23,18 @@ export interface NoteDataItem {
 
 const NotePage = () => {
   const { noteId } = useParams();
-  const { socket, receivedMessages, note } = useSocketStore();
+  const { socket, receivedMessages } = useSocketStore();
 
-  const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>(note);
+  const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<EditorData | undefined>();
+
+  // socket.on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
+  socket.on("RETURN_NOTE", (message: NoteMessage) => {
+    setNoteMessage(message);
+    if (message.id !== noteId) return;
+    // setNoteMessage(message);
+  });
 
   const fetchNote = async () => {
     setIsLoading(true);
@@ -37,12 +43,12 @@ const NotePage = () => {
       return;
     }
 
-    if (note) {
-      setNoteMessage(note);
-      setEditorData(mapNoteToEditorData(note));
-      setIsLoading(false);
-      return;
-    }
+    // if (note) {
+    //   setNoteMessage(note);
+    //   setEditorData(mapNoteToEditorData(note));
+    //   setIsLoading(false);
+    //   return;
+    // }
 
     const noteRequest: NoteRequestMessage = {
       id: noteId,
@@ -50,7 +56,7 @@ const NotePage = () => {
       room: noteId,
     };
 
-    if (socket && socket.connected && !note) {
+    if (socket && socket.connected) {
       const response: NoteMessage = await socket.emitWithAck(
         NOTE.CLIENT_EVENT.FETCH_NOTE,
         noteRequest
@@ -79,6 +85,7 @@ const NotePage = () => {
     }
 
     console.log("Note data change", noteId);
+
     const message: NoteMessage = {
       id: noteId,
       title: title,
@@ -93,31 +100,26 @@ const NotePage = () => {
       console.log("Socket is connected and is sending message", message);
       socket.emit(NOTE.CLIENT_EVENT.UPDATE_NOTE, message);
     }
+    setNoteMessage(message);
   };
 
-  const handleNoteComponentChange = async (data: EditorData) => {
+  const handleNoteComponentChange = async (data: any) => {
+    console.log("Component: ", data);
     if (!noteId) {
       toast.error("Note ID not found");
       return;
     }
 
     const message: NoteMessage = mapEditorDataToNote(data);
-    const componentMessages: ComponentMessage[] = mapBlocksToComponents(
-      data.blocks
-    );
-    console.log("Note component change", noteId, message);
+    // console.log("Note component change", noteId, message);
 
     if (socket && socket.connected) {
       console.log("Socket is connected and is sending message", message);
       socket?.emit(NOTE.CLIENT_EVENT.UPDATE_NOTE, message);
     }
-  };
 
-  const debounceNoteComponentChange = useDebounce(
-    handleNoteComponentChange,
-    500
-  );
-  const debounceNoteDataChange = useDebounce(handleNoteDataChange, 500);
+    setNoteMessage(message);
+  };
 
   return (
     <Box
@@ -133,7 +135,7 @@ const NotePage = () => {
       <Input
         id={"title-input-" + noteId}
         placeholder="Untitled"
-        value={noteMessage?.title || ""}
+        value={noteMessage?.title}
         sx={{
           border: "none",
           ":before": {
@@ -149,7 +151,7 @@ const NotePage = () => {
           color: "#000000",
         }}
         onChange={(e) => {
-          debounceNoteDataChange(e.target.value, noteMessage?.coverUrl);
+          handleNoteDataChange(e.target.value, noteMessage?.coverUrl);
         }}
       />
       <Box
@@ -169,7 +171,7 @@ const NotePage = () => {
           {editorData && !isLoading ? (
             <HiveEditor
               data={editorData}
-              onChange={debounceNoteComponentChange}
+              onChange={handleNoteComponentChange}
               editorblock={"editorjs-container"}
             />
           ) : (

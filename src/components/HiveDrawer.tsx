@@ -20,7 +20,7 @@ import {
 import { NoteResponse } from "api/data-contracts";
 import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import { DrawerHeader } from "layouts/PublicLayout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useNoteStore from "utils/NoteStore";
 
@@ -436,6 +436,7 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
 
   return (
     <Box
+      id={activeNoteId + "-notes" + itemDepth + "-box" + Math.random()}
       sx={{
         display: "flex",
         flexDirection: "column",

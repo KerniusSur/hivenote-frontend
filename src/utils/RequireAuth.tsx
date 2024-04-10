@@ -22,31 +22,36 @@ const RequireAuth = (props: RequireAuthProps) => {
   };
   useEffect(() => {
     fetchAccount();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (tag === "note-page") {
       const noteId = location.pathname.split("/")[2];
-      if (noteId !== socketStore.note?.id) {
-        socketStore.joinRoom(noteId);
-      }
+
+      onPathChange(noteId);
 
       if (socketStore.note?.id) {
         socketStore.leaveRoom(socketStore.note.id);
       }
 
-      // if (!socketStore.socket?.connected) {
-      // socketStore.init(noteId);
-      //   return;
-      // }
-
-      // if (socketStore.socket?.connected && socketStore.note?.id !== noteId) {
-      //   socketStore.socket.disconnect();
-      //   socketStore.init(noteId);
-      // }
+      return () => {
+        if (socketStore.note?.id) {
+          socketStore.leaveRoom(socketStore.note.id);
+        }
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location, location.pathname, socketStore.socket?.connected]);
+
+  const onPathChange = async (noteId: string) => {
+    if (noteId !== socketStore.note?.id) {
+      console.log("Joining room", noteId);
+
+      const res = await socketStore.joinRoom(noteId);
+      console.log("Join room result", res);
+    }
+  };
 
   const isAlreadyLoggedIn = () =>
     authStore.account &&

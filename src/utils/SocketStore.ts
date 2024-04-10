@@ -1,102 +1,68 @@
 import GENERAL_EVENT from "models/events/GeneralEvents";
+import NOTE from "models/events/NoteEvents";
 import CommentMessage from "models/message/CommentMessage";
 import ComponentMessage from "models/message/ComponentMessage";
 import NoteMessage from "models/message/NoteMessage";
 import RoomMessage from "models/message/RoomMessage";
-import { io, Socket } from "socket.io-client";
-import { getSocketBaseUrl } from "utils";
+import { Socket } from "socket.io-client";
+import { socket } from "utils/HiveSocket";
 import { create } from "zustand";
 
 interface SocketStore {
-  socket?: Socket;
+  socket: Socket;
   note: NoteMessage | undefined;
   receivedMessages:
     | NoteMessage[]
     | ComponentMessage[]
     | CommentMessage[]
     | any[];
-  joinRoom: (room: string) => void;
-  leaveRoom: (room: string) => void;
-  // init: (noteId?: string) => void;
+  joinRoom: (room: string) => Promise<boolean>;
+  leaveRoom: (room: string) => Promise<boolean>;
 }
 
-const useSocketStore = create<SocketStore>((set, get) => ({
-  socket: io(getSocketBaseUrl(), {
-    autoConnect: true,
-  }),
-  receivedMessages: [],
-  note: undefined,
-  joinRoom: async (room: string) => {
-    const message: RoomMessage = {
-      room,
-      isJoining: true,
-    };
+const useSocketStore = create<SocketStore>((set, get) => {
+  const newSocket = socket.on(
+    NOTE.SERVER_EVENT.RETURN_NOTE,
+    (message: NoteMessage) => {
+      console.log("NOTE.SERVER_EVENT.RETURN_NOTE", message);
+      set({ note: message });
+    }
+  );
 
-    await get().socket?.emitWithAck(GENERAL_EVENT.ROOM_REQUEST, message);
-  },
-  leaveRoom: async (room: string) => {
-    const message: RoomMessage = {
-      room,
-      isJoining: false,
-    };
+  return {
+    socket: newSocket,
+    receivedMessages: [],
+    note: undefined,
+    joinRoom: async (room: string) => {
+      const roomMessage: RoomMessage = {
+        isJoining: true,
+        room,
+      };
+      const socket = get().socket;
 
-    await get().socket?.emitWithAck(GENERAL_EVENT.ROOM_REQUEST, message);
-  },
+      const hasJoinedSuccessfully = await socket.emitWithAck(
+        GENERAL_EVENT.ROOM_REQUEST,
+        roomMessage
+      );
 
-  // init: async (noteId?: string) => {
-  //   if (!noteId) {
-  //     noteId = window.location.pathname.split("/")[2];
-  //   }
+      return hasJoinedSuccessfully;
+    },
+    leaveRoom: async (room: string) => {
+      const roomMessage: RoomMessage = {
+        room,
+        isJoining: false,
+      };
 
-  //   let socket = get().socket;
-  //   if (!socket) {
-  //     const socketUrl = getSocketBaseUrl(noteId);
-  //     socket = io(socketUrl, {
-  //       autoConnect: false,
-  //     });
-  //   }
+      const socket = get().socket;
 
-  //   socket
-  //     .on(GENERAL_EVENT.CONNECT, () => {
-  //       console.log("Connected to socket");
-  //       const location = useLocation();
-  //       if (location.pathname.includes("/note")) {
-  //         const noteId = location.pathname.split("/")[2];
-  //         const roomMessage: RoomMessage = {
-  //           room: noteId,
+      const hasLeftSuccessfully = await socket.emitWithAck(
+        GENERAL_EVENT.ROOM_REQUEST,
+        roomMessage
+      );
 
-  //         }
-  //         socket.emit(GENERAL_EVENT.ROOM_REQUEST, noteId);
-  //       }
-
-  //       socket.on("disconnect", () => {
-  //         // socket.rooms === {}
-  //       });
-  //     })
-  //     .on(GENERAL_EVENT.DISCONNECT, () => {
-  //       console.log("Disconnected from socket");
-  //     })
-  //     .on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
-  //       console.log("NOTE.SERVER_EVENT.RETURN_FETCHED", message);
-  //       set({ note: message });
-  //       set({ receivedMessages: [...get().receivedMessages, message] });
-  //     })
-  //     .on(
-  //       COMPONENT.SERVER_EVENT.RETURN_COMPONENT,
-  //       (message: ComponentMessage) => {
-  //         console.log("COMPONENT.SERVER_EVENT.RETURN_FETCHED", message);
-  //         set({ receivedMessages: [...get().receivedMessages, message] });
-  //       }
-  //     )
-  //     .on(COMMENT.SERVER_EVENT.RETURN_COMMENT, (message: CommentMessage) => {
-  //       console.log("COMMENT.SERVER_EVENT.RETURN_UPDATED", message);
-  //       set({ receivedMessages: [...get().receivedMessages, message] });
-  //     });
-
-  //   socket.open();
-
-  //   set({ socket });
-  // },
-}));
+      return hasLeftSuccessfully;
+    },
+  };
+});
 
 export default useSocketStore;

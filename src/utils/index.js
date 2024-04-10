@@ -10,4 +10,7 @@ export const getBaseUrl = () =>
 //   "?room=" +
 //   noteId;
 export const getSocketBaseUrl = () =>
-  process.env.NODE_ENV === "production" ? "hivenote.lol" : "192.168.0.173:9092";
+process.env.NODE_ENV === "production" ? "hivenote.lol" : "localhost:9092";
+  // process.env.NODE_ENV === "production" ? "hivenote.lol" : "192.168.64.1:9092";
+// process.env.NODE_ENV === "production" ? "hivenote.lol" : "127.0.0.1:9092";
+// process.env.NODE_ENV === "production" ? "hivenote.lol" : "192.168.0.173:9092";

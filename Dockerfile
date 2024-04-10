@@ -16,6 +16,10 @@ RUN npm run build
 # Use official nginx image as the base image
 FROM nginx:latest
 
+# Set the environment variables
+ARG NODE_ENV=production
+ENV NODE_ENV ${NODE_ENV}
+
 # Copy the build output to replace the default nginx contents.
 COPY --from=build /usr/local/app/build /usr/share/nginx/html
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
