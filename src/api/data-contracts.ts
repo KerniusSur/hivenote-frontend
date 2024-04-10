@@ -61,7 +61,9 @@ export interface ComponentProperties {
 export interface ComponentResponse {
   /** @format uuid */
   id?: string;
-  type?: "header" | "paragraph" | "list" | "checklist" | "image" | "link";
+  type?: "header" | "paragraph" | "list" | "checklist" | "image" | "link" | "linkTool";
+  /** @format int32 */
+  order?: number;
   properties?: ComponentProperties;
   parent?: ComponentResponse;
 }
@@ -77,6 +79,31 @@ export interface NoteResponse {
   collaborators: AccountPublicResponse[];
   comments?: CommentResponse[];
   children?: NoteResponse[];
+}
+
+export interface EventUpdateRequest {
+  title?: string;
+  description?: string;
+  location?: string;
+  /** @format date-time */
+  eventStart?: string;
+  /** @format date-time */
+  eventEnd?: string;
+  /** @format uuid */
+  id?: string;
+}
+
+export interface EventResponse {
+  /** @format uuid */
+  id?: string;
+  title?: string;
+  description?: string;
+  location?: string;
+  /** @format date-time */
+  eventStart?: string;
+  /** @format date-time */
+  eventEnd?: string;
+  createdBy?: AccountPublicResponse;
 }
 
 export interface UpdateAccountInfoRequest {
@@ -109,6 +136,16 @@ export interface NoteCreateRequest {
   isDeleted?: boolean;
   /** @format uuid */
   parentId?: string;
+}
+
+export interface EventCreateRequest {
+  title?: string;
+  description?: string;
+  location?: string;
+  /** @format date-time */
+  eventStart?: string;
+  /** @format date-time */
+  eventEnd?: string;
 }
 
 export interface RegisterRequest {

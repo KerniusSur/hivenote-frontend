@@ -9,16 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  NoteCreateRequest,
-  NoteResponse,
-  NoteUpdateRequest,
-} from "./data-contracts";
+import { NoteCreateRequest, NoteResponse, NoteUpdateRequest } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Notes<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class Notes<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
