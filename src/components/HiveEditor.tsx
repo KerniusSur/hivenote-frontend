@@ -18,7 +18,6 @@ const HiveEditor = ({ data, onChange, editorblock }: HiveEditorProps) => {
         autofocus: true,
         tools: EDITOR_JS_TOOLS,
         data: data,
-        logLevel: LogLevels.VERBOSE,
         async onChange(api, event) {
           const data = await api.saver.save();
           onChange(data);
