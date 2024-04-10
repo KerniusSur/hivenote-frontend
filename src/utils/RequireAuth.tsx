@@ -1,8 +1,8 @@
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
 import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import useAuthStore from "utils/AuthStore";
-import useSocketStore from "utils/SocketStore";
+import useAuthStore from "utils/stores/AuthStore";
+import useSocketStore from "utils/stores/SocketStore";
 
 interface RequireAuthProps {
   access?: string;

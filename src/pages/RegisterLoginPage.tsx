@@ -7,7 +7,7 @@ import HiveInput from "components/HiveInput";
 import { Form, Formik } from "formik";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { createApi } from "utils/ApiCreator";
+import { createApi } from "utils/api/ApiCreator";
 import * as yup from "yup";
 
 interface RegisterLoginPageProps {
