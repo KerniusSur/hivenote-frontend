@@ -11,10 +11,10 @@ import HiveLoadingSpinner from "components/HiveLoadingSpinner";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createApi } from "utils/ApiCreator";
-import useAuthStore from "utils/AuthStore";
-import useNoteStore from "utils/NoteStore";
-import useSocketStore from "utils/SocketStore";
+import { createApi } from "utils/api/ApiCreator";
+import useAuthStore from "utils/stores/AuthStore";
+import useNoteStore from "utils/stores/NoteStore";
+import useSocketStore from "utils/stores/SocketStore";
 
 interface HiveNavbarProps {
   isDrawerOpen: boolean;
@@ -185,7 +185,17 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                 />
               )}
               <>
-                {!isStateReady && <HiveLoadingSpinner size="small" />}
+                {!isStateReady && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      width: "100%",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <HiveLoadingSpinner size="small" />
+                  </Box>
+                )}
                 {isStateReady && !account && (
                   <Box
                     sx={{

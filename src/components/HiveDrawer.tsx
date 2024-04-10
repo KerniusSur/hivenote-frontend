@@ -20,9 +20,9 @@ import {
 import { NoteResponse } from "api/data-contracts";
 import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import { DrawerHeader } from "layouts/PublicLayout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useNoteStore from "utils/NoteStore";
+import useNoteStore from "utils/stores/NoteStore";
 
 interface HiveDrawerProps {
   isDrawerOpen: boolean;

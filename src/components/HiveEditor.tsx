@@ -1,7 +1,6 @@
-import EditorJS, { LogLevels } from "@editorjs/editorjs";
-import { memo, useEffect, useRef } from "react";
+import EditorJS from "@editorjs/editorjs";
 import { EDITOR_JS_TOOLS } from "config/editorToolsConfig";
-
+import { memo, useEffect, useRef } from "react";
 
 interface HiveEditorProps {
   data: any;
@@ -38,4 +37,3 @@ const HiveEditor = ({ data, onChange, editorblock }: HiveEditorProps) => {
 };
 
 export default memo(HiveEditor);
-

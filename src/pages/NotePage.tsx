@@ -11,10 +11,12 @@ import NoteRequestMessage from "models/message/NoteRequestMessage";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import useSocketStore from "utils/SocketStore";
+import useSocketStore from "utils/stores/SocketStore";
 import { v4 as uuid } from "uuid";
 import "../components/HiveEditor.css";
 import "./Editor.css";
+import LinkedListUtil from "utils/LinkedListUtil";
+import LinkedList from "models/general/LinkedList";
 
 export interface NoteDataItem {
   text?: string;
@@ -43,13 +45,6 @@ const NotePage = () => {
       return;
     }
 
-    // if (note) {
-    //   setNoteMessage(note);
-    //   setEditorData(mapNoteToEditorData(note));
-    //   setIsLoading(false);
-    //   return;
-    // }
-
     const noteRequest: NoteRequestMessage = {
       id: noteId,
       type: MessageType.CLIENT,
@@ -65,6 +60,7 @@ const NotePage = () => {
       console.log("fetchNote -> note", response);
       setNoteMessage(response);
       setEditorData(mapNoteToEditorData(response));
+      setIsLoading(false);
     }
     setIsLoading(false);
   };
@@ -90,7 +86,10 @@ const NotePage = () => {
       id: noteId,
       title: title,
       coverUrl: coverUrl,
-      components: mapBlocksToComponents(editorData.blocks),
+      // components: LinkedListUtil.mapToLinkedList(
+      //   mapBlocksToComponents(editorData.blocks)
+      // ),
+      components: getComponentListFromBlocks(editorData.blocks),
       type: MessageType.CLIENT,
       room: noteId,
       comments: [],
@@ -103,19 +102,26 @@ const NotePage = () => {
     setNoteMessage(message);
   };
 
-  const handleNoteComponentChange = async (data: any) => {
-    console.log("Component: ", data);
+  const handleNoteComponentChange = async (data: EditorData) => {
+    // console.log("Component: ", data);
     if (!noteId) {
       toast.error("Note ID not found");
       return;
     }
 
-    const message: NoteMessage = mapEditorDataToNote(data);
+    const message: NoteMessage = mapEditorDataToNote(data, noteMessage);
+
     // console.log("Note component change", noteId, message);
 
+    console.log("socket: ", socket);
+    console.log("socket.connected: ", socket?.connected);
     if (socket && socket.connected) {
       console.log("Socket is connected and is sending message", message);
-      socket?.emit(NOTE.CLIENT_EVENT.UPDATE_NOTE, message);
+      let res = await socket.emitWithAck(
+        NOTE.CLIENT_EVENT.UPDATE_NOTE,
+        message
+      );
+      console.log("res: ", res);
     }
 
     setNoteMessage(message);
@@ -184,68 +190,100 @@ const NotePage = () => {
 };
 
 const mapNoteToEditorData = (note: NoteMessage): EditorData => {
-  const EditorData: EditorData = {
+  const editorData: EditorData = {
     time: 0,
-    blocks: note.components.map((component) => {
-      const block: EditorBlock = {
-        id: component.id,
-        type: component.componentType,
-        data: {
-          text: component.properties.text,
-          level: component.properties.level,
-          items: component.properties.items as any[],
-          title: component.properties.title,
-          message: component.properties.message,
-          alignment: component.properties.alignment,
-          caption: component.properties.caption,
-          html: component.properties.html,
-          link: component.properties.link,
-        },
-      };
-
-      return block;
-    }),
+    // blocks: getBlocksFromComponents(note.components),
+    blocks: getBlockListFromComponents(note.components),
   };
 
-  return EditorData;
+  console.log("editorData: ", editorData);
+  return editorData;
 };
 
-const mapEditorDataToNote = (data: EditorData): NoteMessage => {
+const getBlocksFromComponents = (components: LinkedList<ComponentMessage>) => {
+  console.log("components: ", components);
+
+  const blocks: EditorBlock[] = LinkedListUtil.mapFromLinkedListToList(
+    components
+  ).map((component) => {
+    const block: EditorBlock = {
+      id: component.id,
+      type: component.componentType,
+      data: {
+        text: component.properties.text,
+        level: component.properties.level,
+        items: component.properties.items as any[],
+        title: component.properties.title,
+        message: component.properties.message,
+        alignment: component.properties.alignment,
+        caption: component.properties.caption,
+        html: component.properties.html,
+        link: component.properties.link,
+      },
+    };
+
+    return block;
+  });
+
+  console.log("blocks: ", blocks);
+
+  return blocks;
+};
+
+const getBlockListFromComponents = (
+  components: ComponentMessage[]
+): EditorBlock[] => {
+  const blocks: EditorBlock[] = components.map((component) => {
+    const block: EditorBlock = {
+      id: component.id,
+      type: component.componentType,
+      data: {
+        text: component.properties.text,
+        level: component.properties.level,
+        items: component.properties.items as any[],
+        title: component.properties.title,
+        message: component.properties.message,
+        alignment: component.properties.alignment,
+        caption: component.properties.caption,
+        html: component.properties.html,
+        link: component.properties.link,
+      },
+    };
+
+    return block;
+  });
+
+  return blocks;
+};
+
+const mapEditorDataToNote = (
+  data: EditorData,
+  currentNote?: NoteMessage
+): NoteMessage => {
   const note: NoteMessage = {
-    components: data.blocks.map((block) => {
-      const component: ComponentMessage = {
-        id: block.id,
-        componentType: block.type,
-        properties: {
-          text: block.data.text,
-          level: block.data.level,
-          items: block.data.items,
-          title: block.data.title,
-          message: block.data.message,
-          alignment: block.data.alignment,
-          caption: block.data.caption,
-          html: block.data.html,
-          link: block.data.link,
-        },
-      };
-      return component;
-    }),
+    id: currentNote?.id,
+    room: currentNote?.room,
+    title: currentNote?.title,
+    coverUrl: currentNote?.coverUrl,
     type: MessageType.CLIENT,
+    components: getComponentListFromBlocks(data.blocks),
     comments: [],
   };
 
   return note;
 };
 
-const mapBlocksToComponents = (blocks: EditorBlock[]): ComponentMessage[] => {
+const getComponentListFromBlocks = (
+  blocks: EditorBlock[]
+): ComponentMessage[] => {
   const components: ComponentMessage[] = blocks.map((block) => {
     const component: ComponentMessage = {
-      id: block.id || uuid().toString(),
+      id: block.id,
       componentType: block.type,
       properties: {
         text: block.data.text,
         level: block.data.level,
-        items: block.data.items,
+        items: block.data.items as any[],
         title: block.data.title,
         message: block.data.message,
         alignment: block.data.alignment,
@@ -254,6 +292,7 @@ const mapBlocksToComponents = (blocks: EditorBlock[]): ComponentMessage[] => {
         link: block.data.link,
       },
     };
+
     return component;
   });
 
