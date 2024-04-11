@@ -21,7 +21,7 @@ ARG NODE_ENV=production
 ENV NODE_ENV ${NODE_ENV}
 
 # Copy the build output to replace the default nginx contents.
-COPY --from=build /usr/local/app/build /usr/share/nginx/html
+COPY --from=build /usr/local/app/dist /usr/share/nginx/html
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
