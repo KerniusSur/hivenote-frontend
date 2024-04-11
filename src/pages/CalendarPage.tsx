@@ -6,7 +6,7 @@ import {
   EventResponse,
   EventUpdateRequest,
 } from "api/data-contracts";
-import { Event } from "api/Event";
+import { Events } from "api/Events";
 import CalendarHeader from "components/calendar/CalendarHeader";
 import WeekHeader, { isWeekend } from "components/calendar/WeekHeader";
 import EventCreateEditDialog from "components/EventCreateEditDialog";
@@ -62,7 +62,7 @@ const CalendarPage = () => {
   moment.locale("lt");
   const localizer = momentLocalizer(moment);
   const calendarRef = useRef(null);
-  const eventAPI = useRef(createApi("event") as Event);
+  const eventAPI = useRef(createApi("event") as Events);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const DnDCalendar = withDragAndDrop(Calendar);
 
@@ -472,7 +472,7 @@ const CalendarPage = () => {
         <Typography variant="h2">Calendar</Typography>
         {!isMobile && (
           <HiveButton
-          compact
+            compact
             startIcon={<AddRounded />}
             variant="contained"
             text="New appointment"

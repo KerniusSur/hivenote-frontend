@@ -82,28 +82,28 @@ export interface NoteResponse {
 }
 
 export interface EventUpdateRequest {
-  title?: string;
+  title: string;
   description?: string;
   location?: string;
   /** @format date-time */
-  eventStart?: string;
+  eventStart: string;
   /** @format date-time */
-  eventEnd?: string;
+  eventEnd: string;
   /** @format uuid */
-  id?: string;
+  id: string;
 }
 
 export interface EventResponse {
   /** @format uuid */
-  id?: string;
-  title?: string;
+  id: string;
+  title: string;
   description?: string;
   location?: string;
   /** @format date-time */
-  eventStart?: string;
+  eventStart: string;
   /** @format date-time */
-  eventEnd?: string;
-  createdBy?: AccountPublicResponse;
+  eventEnd: string;
+  createdBy: AccountPublicResponse;
 }
 
 export interface UpdateAccountInfoRequest {
@@ -139,13 +139,13 @@ export interface NoteCreateRequest {
 }
 
 export interface EventCreateRequest {
-  title?: string;
+  title: string;
   description?: string;
   location?: string;
   /** @format date-time */
-  eventStart?: string;
+  eventStart: string;
   /** @format date-time */
-  eventEnd?: string;
+  eventEnd: string;
 }
 
 export interface RegisterRequest {

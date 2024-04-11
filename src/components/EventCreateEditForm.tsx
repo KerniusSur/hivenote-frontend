@@ -1,7 +1,7 @@
 import { CancelOutlined, DeleteRounded } from "@mui/icons-material";
 import { Box, Divider, styled, Typography, useMediaQuery } from "@mui/material";
 import { EventResponse } from "api/data-contracts";
-import { Event } from "api/Event";
+import { Events } from "api/Events";
 import HiveButton from "components/HiveButton";
 import HiveDatePicker from "components/HiveDatePicker";
 import HiveDeleteConfirmDialog from "components/HiveDeleteConfirmDialog";
@@ -29,7 +29,7 @@ interface EventCreateEditFormProps {
 const EventCreateEditForm = (props: EventCreateEditFormProps) => {
   const { event, isEdit, handleSubmit, handleCancel } = props;
   const isMobile = useMediaQuery("(max-width: 600px)");
-  const eventAPI = useRef(createApi("event") as Event);
+  const eventAPI = useRef(createApi("event") as Events);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 

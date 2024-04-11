@@ -114,7 +114,7 @@ export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    */
   sendEmailConfirmation = (
     query: {
-      email: string;
+      arg0: string;
     },
     params: RequestParams = {}
   ) =>

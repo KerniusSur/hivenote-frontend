@@ -1,16 +1,17 @@
 import { ThemeProvider } from "@emotion/react";
 import PublicLayout from "layouts/PublicLayout";
 import HomePage from "pages/HomePage";
+import NotePage from "pages/NotePage";
 import RegisterLoginPage from "pages/RegisterLoginPage";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import RequireAuth from "utils/RequireAuth";
 import AppTheme from "./AppTheme";
 import "./index.css";
-import RequireAuth from "utils/RequireAuth";
-import DefaultPage from "pages/DefaultPage";
-import NotePage from "pages/NotePage";
+
+import CalendarPage from "pages/CalendarPage";
 
 const root = createRoot(document.querySelector("#root")!);
 root.render(
@@ -80,11 +81,12 @@ export const layouts: PathGroup[] = [
         access: undefined,
         tag: "register-page",
       },
-      // {
-      //   path: "",
-      //   element: <DefaultPage />,
-      //   access: "USER",
-      // },
+      {
+        path: "calendar",
+        element: <CalendarPage />,
+        access: undefined,
+        tag: "calendar-page",
+      },
     ],
   },
   {

@@ -1,5 +1,6 @@
 import { Account } from "api/Account";
 import { Auth } from "api/Auth";
+import { Events } from "api/Events";
 import { Notes } from "api/Notes";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -33,6 +34,11 @@ export const createApi = (type: string): any => {
 
     case "note": {
       returnValue = new Notes({ baseURL: getBaseUrl() });
+      break;
+    }
+
+    case "event": {
+      returnValue = new Events({ baseURL: getBaseUrl() });
       break;
     }
 

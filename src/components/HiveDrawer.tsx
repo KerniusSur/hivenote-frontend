@@ -1,6 +1,7 @@
 import {
   AddRounded,
   AddToPhotosRounded,
+  CalendarTodayOutlined,
   CloseRounded,
   KeyboardArrowDownRounded,
   KeyboardArrowRightRounded,
@@ -137,6 +138,7 @@ const DrawerContent = (props: DrawerContentProps) => {
     handleDeleteNote,
   } = props;
   const { activeNoteId } = useNoteStore();
+  const navigate = useNavigate();
 
   const [menuState, setMenuState] = useState<{
     open: boolean;
@@ -180,16 +182,43 @@ const DrawerContent = (props: DrawerContentProps) => {
         component={Button}
         onClick={() => handleCreateNote()}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
           "&:hover": {
             cursor: "pointer",
           },
         }}
       >
-        <AddToPhotosRounded />
-        <Typography variant="body2">Add new note</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "flex-start",
+            gap: "8px",
+          }}
+        >
+          <AddToPhotosRounded />
+          <Typography variant="body2">Add new note</Typography>
+        </Box>
+      </Box>
+      <Box
+        component={Button}
+        onClick={() => navigate("/calendar")}
+        sx={{
+          "&:hover": {
+            cursor: "pointer",
+          },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "flex-start",
+            gap: "8px",
+          }}
+        >
+          <CalendarTodayOutlined />
+          <Typography variant="body2">Calendar</Typography>
+        </Box>
       </Box>
       <Box
         sx={{

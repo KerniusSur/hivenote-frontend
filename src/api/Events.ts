@@ -10,79 +10,71 @@
  */
 
 import { EventCreateRequest, EventResponse, EventUpdateRequest } from "./data-contracts";
-import { HttpClient, RequestParams } from "./http-client";
+import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Event<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+export class Events<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
-   * @tags event
+   * @tags events
    * @name Update
-   * @request PUT:/api/v1/user/event
+   * @request PUT:/api/v1/user/events
    */
-  update = (
-    query: {
-      request: EventUpdateRequest;
-    },
-    params: RequestParams = {}
-  ) =>
+  update = (data: EventUpdateRequest, params: RequestParams = {}) =>
     this.request<EventResponse, any>({
-      path: `/api/v1/user/event`,
+      path: `/api/v1/user/events`,
       method: "PUT",
-      query: query,
+      body: data,
+      type: ContentType.Json,
       ...params,
     });
   /**
    * No description
    *
-   * @tags event
+   * @tags events
    * @name Create
-   * @request POST:/api/v1/user/event
+   * @request POST:/api/v1/user/events
    */
-  create = (
-    query: {
-      request: EventCreateRequest;
-    },
-    params: RequestParams = {}
-  ) =>
+  create = (data: EventCreateRequest, params: RequestParams = {}) =>
     this.request<EventResponse, any>({
-      path: `/api/v1/user/event`,
+      path: `/api/v1/user/events`,
       method: "POST",
-      query: query,
+      body: data,
+      type: ContentType.Json,
       ...params,
     });
   /**
    * No description
    *
-   * @tags event
+   * @tags events
    * @name FindById
-   * @request GET:/api/v1/user/event/{id}
+   * @request GET:/api/v1/user/events/{id}
    */
   findById = (id: string, params: RequestParams = {}) =>
     this.request<EventResponse, any>({
-      path: `/api/v1/user/event/${id}`,
+      path: `/api/v1/user/events/${id}`,
       method: "GET",
       ...params,
     });
   /**
    * No description
    *
-   * @tags event
+   * @tags events
    * @name Delete
-   * @request DELETE:/api/v1/user/event/{id}
+   * @request DELETE:/api/v1/user/events/{id}
    */
   delete = (id: string, params: RequestParams = {}) =>
     this.request<void, any>({
-      path: `/api/v1/user/event/${id}`,
+      path: `/api/v1/user/events/${id}`,
       method: "DELETE",
       ...params,
     });
   /**
    * No description
    *
-   * @tags event
+   * @tags events
    * @name FindAllUserEventsFilteredBy
-   * @request GET:/api/v1/user/event/filter
+   * @request GET:/api/v1/user/events/filter
    */
   findAllUserEventsFilteredBy = (
     query?: {
@@ -95,7 +87,7 @@ export class Event<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
     params: RequestParams = {}
   ) =>
     this.request<EventResponse[], any>({
-      path: `/api/v1/user/event/filter`,
+      path: `/api/v1/user/events/filter`,
       method: "GET",
       query: query,
       ...params,
@@ -103,13 +95,13 @@ export class Event<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
   /**
    * No description
    *
-   * @tags event
+   * @tags events
    * @name FindAllUserEvents
-   * @request GET:/api/v1/user/event/all
+   * @request GET:/api/v1/user/events/all
    */
   findAllUserEvents = (params: RequestParams = {}) =>
     this.request<EventResponse[], any>({
-      path: `/api/v1/user/event/all`,
+      path: `/api/v1/user/events/all`,
       method: "GET",
       ...params,
     });
