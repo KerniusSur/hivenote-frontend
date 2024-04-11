@@ -2,7 +2,6 @@ import { Account } from "api/Account";
 import { Auth } from "api/Auth";
 import { Events } from "api/Events";
 import { Notes } from "api/Notes";
-import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { getBaseUrl } from "utils";
 
@@ -20,7 +19,6 @@ const notifyError = (message: string) =>
 
 export const createApi = (type: string): any => {
   // eslint-disable-next-line
-  const { t } = useTranslation("translation", { keyPrefix: "ApiError" });
   let returnValue;
   switch (type) {
     case "auth": {

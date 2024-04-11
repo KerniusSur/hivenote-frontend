@@ -2,7 +2,6 @@ import { CalendarTodayRounded } from "@mui/icons-material";
 import { Box, IconButton, Typography, useMediaQuery } from "@mui/material";
 import {
   DatePicker,
-  DatePickerProps,
   LocalizationProvider,
   MobileDatePicker,
 } from "@mui/x-date-pickers";
@@ -11,14 +10,13 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useField } from "formik";
-import i18next from "i18next";
 import { useState } from "react";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault("Europe/Vilnius");
 
-interface HiveDatePickerProps extends DatePickerProps<Date> {
+interface HiveDatePickerProps {
   title?: string;
   label: string;
   minDate?: Date;
@@ -66,10 +64,7 @@ const HiveDatePicker = (props: HiveDatePickerProps) => {
           {title}
         </Typography>
       )}
-      <LocalizationProvider
-        dateAdapter={AdapterDayjs}
-        adapterLocale={i18next.language}
-      >
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"lt"}>
         {!isMobile && (
           <DatePicker
             open={open}
@@ -124,7 +119,7 @@ const HiveDatePicker = (props: HiveDatePickerProps) => {
           <MobileDatePicker
             disablePast={false}
             disabled={disabled}
-            maxDate={maxDate ? (dayjs(maxDate) as any) : null}
+            maxDate={maxDate ? (dayjs(maxDate) as any).toDate() : null}
             minDate={minDate ? (dayjs(minDate) as any) : null}
             slotProps={{
               mobilePaper: {
