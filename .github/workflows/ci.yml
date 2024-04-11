@@ -1,5 +1,5 @@
 # Hivenote Frontend CI
-name: hivenote continuous integration front
+name: hivenote continuous integration frontend
 
 permissions:
   id-token: write
@@ -53,6 +53,13 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{env.AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{env.AWS_REGION}}
 
       - name: publish
         run: |
