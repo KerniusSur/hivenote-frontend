@@ -119,7 +119,7 @@ export class Auth<
    */
   sendEmailConfirmation = (
     query: {
-      email: string;
+      arg0: string;
     },
     params: RequestParams = {}
   ) =>

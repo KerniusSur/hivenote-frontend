@@ -1,4 +1,3 @@
-import LinkedList from "models/general/LinkedList";
 import {
   default as CommentMessage,
   default as ComponentMessage,
@@ -10,7 +9,6 @@ interface NoteMessage extends Message {
   title?: string;
   coverUrl?: string;
   components: ComponentMessage[];
-  // components: LinkedList<ComponentMessage>
   comments: CommentMessage[];
 }
 

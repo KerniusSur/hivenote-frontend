@@ -276,9 +276,11 @@ const mapEditorDataToNote = (
 const getComponentListFromBlocks = (
   blocks: EditorBlock[]
 ): ComponentMessage[] => {
+  let priority = 1;
   const components: ComponentMessage[] = blocks.map((block) => {
     const component: ComponentMessage = {
       id: block.id,
+      priority: priority++,
       componentType: block.type,
       properties: {
         text: block.data.text,

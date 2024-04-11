@@ -101,4 +101,26 @@ export class Notes<
       method: "GET",
       ...params,
     });
+  /**
+   * No description
+   *
+   * @tags note
+   * @name FindAllFilteredBy
+   * @request GET:/api/v1/user/notes/filter
+   */
+  findAllFilteredBy = (
+    query?: {
+      accessType?: "FIELD" | "PROPERTY";
+      searchString?: string;
+      isArchived?: boolean;
+      isDeleted?: boolean;
+    },
+    params: RequestParams = {}
+  ) =>
+    this.request<NoteResponse[], any>({
+      path: `/api/v1/user/notes/filter`,
+      method: "GET",
+      query: query,
+      ...params,
+    });
 }

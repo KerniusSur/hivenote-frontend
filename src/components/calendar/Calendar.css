@@ -68,7 +68,7 @@
 }
 
 .rbc-label {
-  font-family: "Open Sans";
+  font-family: "Roboto, sans-serif";
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -85,7 +85,7 @@
 
 .rbc-event-label {
   color: #35bbab;
-  font-family: "Open Sans";
+  font-family: "Roboto, sans-serif";
   font-size: 14px;
   font-style: normal;
   line-height: 20px;
@@ -95,7 +95,7 @@
 
 .rbc-event-content {
   color: #35bbab;
-  font-family: "Open Sans";
+  font-family: "Roboto, sans-serif";
   font-size: 14px;
   font-style: normal;
   line-height: 20px;
