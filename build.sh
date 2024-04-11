@@ -1,1 +1,1 @@
-docker build . -t kernius/hivenote-frontend
+docker build . -t kerniussur/hivenote-frontend

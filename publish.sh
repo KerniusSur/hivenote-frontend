@@ -1,3 +1,3 @@
 #!/bin/bash
-docker build . -t kernius/hivenote-frontend
-docker push kernius/hivenote-frontend
+docker build . -t kerniussur/hivenote-frontend
+docker push kerniussur/hivenote-frontend

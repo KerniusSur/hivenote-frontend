@@ -1,5 +1,5 @@
 #!/bin/bash
 
-docker pull kernius/hivenote-backend
-docker pull kernius/hivenote-frontend
+docker pull kerniussur/hivenote-backend
+docker pull kerniussur/hivenote-frontend
 docker-compose up -d
