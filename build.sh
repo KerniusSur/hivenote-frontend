@@ -1,1 +1,1 @@
-docker build . -t kerniussur/hivenote-frontend
+docker build . -t 992382369361.dkr.ecr.eu-central-1.amazonaws.com/hivenote-frontend
