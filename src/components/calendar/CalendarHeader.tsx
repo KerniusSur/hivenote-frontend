@@ -1,10 +1,10 @@
 import { ChevronLeftRounded, ChevronRightRounded } from "@mui/icons-material";
 import {
-    Box,
-    Divider,
-    IconButton,
-    Typography,
-    useMediaQuery,
+  Box,
+  Divider,
+  IconButton,
+  Typography,
+  useMediaQuery,
 } from "@mui/material";
 import CalendarViewSelector from "components/calendar/CalendarViewSelector";
 import moment from "moment";
