@@ -557,7 +557,7 @@ const CalendarPage = () => {
       {eventDialogOpen.open && (
         <EventCreateEditDialog
           open={eventDialogOpen.open}
-          isEdit={newCalendarEvent?.id !== "temp"}
+          isEdit={eventDialogOpen.objectId !== "temp"}
           dialogTitle={
             eventDialogOpen.objectId ? "Edit appointment" : "New appointment"
           }

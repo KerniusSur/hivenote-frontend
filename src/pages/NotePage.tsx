@@ -1,4 +1,4 @@
-import { Box, Input } from "@mui/material";
+import { Box, Input, Typography } from "@mui/material";
 import HiveEditor from "components/HiveEditor";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
 import EditorBlock from "models/editor/EditorBlock";
@@ -28,14 +28,17 @@ const NotePage = () => {
   const { socket, receivedMessages } = useSocketStore();
 
   const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
+  const [title, setTitle] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<EditorData | undefined>();
+  const [testJsonOutput, setTestJsonOutput] = useState<string>("");
 
   // socket.on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
   socket.on("RETURN_NOTE", (message: NoteMessage) => {
     setNoteMessage(message);
-    if (message.id !== noteId) return;
-    // setNoteMessage(message);
+    if (message.title) {
+      setTitle(message.title);
+    }
   });
 
   const fetchNote = async () => {
@@ -60,6 +63,7 @@ const NotePage = () => {
       console.log("fetchNote -> note", response);
       setNoteMessage(response);
       setEditorData(mapNoteToEditorData(response));
+      setTestJsonOutput(JSON.stringify(response.components, null, 2));
       setIsLoading(false);
     }
     setIsLoading(false);
@@ -74,26 +78,22 @@ const NotePage = () => {
     console.log("Received messages: ", receivedMessages);
   }, [receivedMessages]);
 
-  const handleNoteDataChange = async (title?: string, coverUrl?: string) => {
+  const handleNoteTitleChange = async (title: string, coverUrl?: string) => {
     if (!noteId || !editorData?.blocks) {
       toast.error("NoteId not found");
       return;
     }
 
-    console.log("Note data change", noteId);
-
     const message: NoteMessage = {
       id: noteId,
       title: title,
       coverUrl: coverUrl,
-      // components: LinkedListUtil.mapToLinkedList(
-      //   mapBlocksToComponents(editorData.blocks)
-      // ),
       components: getComponentListFromBlocks(editorData.blocks),
       type: MessageType.CLIENT,
       room: noteId,
       comments: [],
     };
+    setTitle(title);
 
     if (socket && socket.connected) {
       console.log("Socket is connected and is sending message", message);
@@ -102,26 +102,24 @@ const NotePage = () => {
     setNoteMessage(message);
   };
 
-  const handleNoteComponentChange = async (data: EditorData) => {
-    // console.log("Component: ", data);
+  const handleNoteContentChange = async (data: EditorData) => {
     if (!noteId) {
       toast.error("Note ID not found");
       return;
     }
 
     const message: NoteMessage = mapEditorDataToNote(data, noteMessage);
+    message.title = noteMessage?.title;
+    message.coverUrl = noteMessage?.coverUrl;
 
-    // console.log("Note component change", noteId, message);
+    console.log("handleNoteComponentChange", message.title);
 
-    console.log("socket: ", socket);
-    console.log("socket.connected: ", socket?.connected);
     if (socket && socket.connected) {
       console.log("Socket is connected and is sending message", message);
       let res = await socket.emitWithAck(
         NOTE.CLIENT_EVENT.UPDATE_NOTE,
         message
       );
-      console.log("res: ", res);
     }
 
     setNoteMessage(message);
@@ -141,7 +139,7 @@ const NotePage = () => {
       <Input
         id={"title-input-" + noteId}
         placeholder="Untitled"
-        value={noteMessage?.title}
+        value={title}
         sx={{
           border: "none",
           ":before": {
@@ -157,7 +155,7 @@ const NotePage = () => {
           color: "#000000",
         }}
         onChange={(e) => {
-          handleNoteDataChange(e.target.value, noteMessage?.coverUrl);
+          handleNoteTitleChange(e.target.value, noteMessage?.coverUrl);
         }}
       />
       <Box
@@ -177,13 +175,16 @@ const NotePage = () => {
           {editorData && !isLoading ? (
             <HiveEditor
               data={editorData}
-              onChange={handleNoteComponentChange}
+              onChange={handleNoteContentChange}
               editorblock={"editorjs-container"}
             />
           ) : (
             <HiveLoadingSpinner size="large" />
           )}
         </Box>
+      </Box>
+      <Box>
+        <Typography variant="h6">{testJsonOutput}</Typography>
       </Box>
     </Box>
   );
@@ -196,38 +197,7 @@ const mapNoteToEditorData = (note: NoteMessage): EditorData => {
     blocks: getBlockListFromComponents(note.components),
   };
 
-  console.log("editorData: ", editorData);
   return editorData;
-};
-
-const getBlocksFromComponents = (components: LinkedList<ComponentMessage>) => {
-  console.log("components: ", components);
-
-  const blocks: EditorBlock[] = LinkedListUtil.mapFromLinkedListToList(
-    components
-  ).map((component) => {
-    const block: EditorBlock = {
-      id: component.id,
-      type: component.componentType,
-      data: {
-        text: component.properties.text,
-        level: component.properties.level,
-        items: component.properties.items as any[],
-        title: component.properties.title,
-        message: component.properties.message,
-        alignment: component.properties.alignment,
-        caption: component.properties.caption,
-        html: component.properties.html,
-        link: component.properties.link,
-      },
-    };
-
-    return block;
-  });
-
-  console.log("blocks: ", blocks);
-
-  return blocks;
 };
 
 const getBlockListFromComponents = (
