@@ -28,17 +28,13 @@ const NotePage = () => {
   const { socket, receivedMessages } = useSocketStore();
 
   const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
-  const [title, setTitle] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<EditorData | undefined>();
   const [testJsonOutput, setTestJsonOutput] = useState<string>("");
 
-  // socket.on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
-  socket.on("RETURN_NOTE", (message: NoteMessage) => {
+  socket.on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
     setNoteMessage(message);
-    if (message.title) {
-      setTitle(message.title);
-    }
+    setEditorData(mapNoteToEditorData(message));
   });
 
   const fetchNote = async () => {
@@ -78,7 +74,7 @@ const NotePage = () => {
     console.log("Received messages: ", receivedMessages);
   }, [receivedMessages]);
 
-  const handleNoteTitleChange = async (title: string, coverUrl?: string) => {
+  const handleNoteTitleChange = async (title?: string, coverUrl?: string) => {
     if (!noteId || !editorData?.blocks) {
       toast.error("NoteId not found");
       return;
@@ -86,14 +82,13 @@ const NotePage = () => {
 
     const message: NoteMessage = {
       id: noteId,
-      title: title,
+      title: title ? title : "Untitled",
       coverUrl: coverUrl,
       components: getComponentListFromBlocks(editorData.blocks),
       type: MessageType.CLIENT,
       room: noteId,
       comments: [],
     };
-    setTitle(title);
 
     if (socket && socket.connected) {
       console.log("Socket is connected and is sending message", message);
@@ -109,10 +104,6 @@ const NotePage = () => {
     }
 
     const message: NoteMessage = mapEditorDataToNote(data, noteMessage);
-    message.title = noteMessage?.title;
-    message.coverUrl = noteMessage?.coverUrl;
-
-    console.log("handleNoteComponentChange", message.title);
 
     if (socket && socket.connected) {
       console.log("Socket is connected and is sending message", message);
@@ -139,7 +130,7 @@ const NotePage = () => {
       <Input
         id={"title-input-" + noteId}
         placeholder="Untitled"
-        value={title}
+        value={noteMessage?.title}
         sx={{
           border: "none",
           ":before": {
@@ -233,7 +224,6 @@ const mapEditorDataToNote = (
   const note: NoteMessage = {
     id: currentNote?.id,
     room: currentNote?.room,
-    title: currentNote?.title,
     coverUrl: currentNote?.coverUrl,
     type: MessageType.CLIENT,
     components: getComponentListFromBlocks(data.blocks),
