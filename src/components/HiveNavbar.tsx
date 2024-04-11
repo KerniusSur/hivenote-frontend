@@ -75,6 +75,7 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
   };
 
   const getAllUserNotes = async () => {
+    if (!account) return;
     const ownerNotes = await noteAPI.current.findAllRootNotesWithOwnerAccess();
     setOwnerNotes(ownerNotes);
 
