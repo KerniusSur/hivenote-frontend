@@ -119,7 +119,7 @@ const HiveDatePicker = (props: HiveDatePickerProps) => {
           <MobileDatePicker
             disablePast={false}
             disabled={disabled}
-            maxDate={maxDate ? (dayjs(maxDate) as any).toDate() : null}
+            maxDate={maxDate ? (dayjs(maxDate) as any) : null}
             minDate={minDate ? (dayjs(minDate) as any) : null}
             slotProps={{
               mobilePaper: {

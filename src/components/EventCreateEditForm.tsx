@@ -96,13 +96,7 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
                   padding: isMobile ? "0" : "1rem",
                 }}
               >
-                <HiveDatePicker
-                  title="Date"
-                  label="date"
-                  onChange={async (newDate: any) =>
-                    formik.setFieldValue("date", dayjs(newDate).toDate())
-                  }
-                />
+                <HiveDatePicker title="Date" label="date" />
                 <Box>
                   <Typography
                     variant="body1"
