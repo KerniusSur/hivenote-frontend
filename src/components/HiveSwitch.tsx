@@ -1,11 +1,9 @@
-import { Switch } from "@mui/material"
+import { Switch } from "@mui/material";
 
 interface HiveSwitchProps {}
 
 const HiveSwitch = (props: HiveSwitchProps) => {
-    return (
-        <Switch />
-    )
-}
+  return <Switch />;
+};
 
-export default HiveSwitch
+export default HiveSwitch;

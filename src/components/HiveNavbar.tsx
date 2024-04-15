@@ -190,9 +190,9 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                   }}
                   onClick={toggleDrawer}
                 >
-                  <MenuOutlined 
+                  <MenuOutlined
                     sx={{
-                      color: theme.palette.primary.main
+                      color: theme.palette.primary.main,
                     }}
                   />
                 </IconButton>

@@ -26,11 +26,7 @@ const HiveButton = (props: HiveButtonProps) => {
       {...other}
     >
       {startIcon}
-      <Typography
-        variant="button"
-      >
-        {props.text}
-      </Typography>
+      <Typography variant="button">{props.text}</Typography>
       {props.endIcon}
     </Button>
   );
