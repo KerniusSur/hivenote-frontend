@@ -228,6 +228,17 @@ export const surfaceDark: Surface = {
   surfaceContainerHighest: "#36343A",
 };
 
+// --------------------------- Outline --------------------------------- //
+export interface Outline {
+  light: string;
+  dark: string;
+}
+
+export const outline: Outline = {
+  light: "#CBC4CF",
+  dark: "#49454E",
+};
+
 // --------------------------- Theme --------------------------------- //
 export const colors = {
   primary: {

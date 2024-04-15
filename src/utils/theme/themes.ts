@@ -1,6 +1,6 @@
 import { Components, PaletteMode, PaletteOptions, Theme } from "@mui/material";
 import { hexToRgba } from "utils/ObjectUtils";
-import colors, { surfaceDark, surfaceLight } from "utils/theme/colors";
+import colors, { outline, surfaceDark, surfaceLight } from "utils/theme/colors";
 
 interface DesignTokens {
   palette: PaletteOptions | undefined;
@@ -83,6 +83,14 @@ export const getDesignTokens = (mode: PaletteMode): DesignTokens => ({
               },
             },
           },
+          // ------------------ MuiDivider ------------------ //
+          MuiDivider: {
+            styleOverrides: {
+              root: {
+                borderColor: outline.light,
+              },
+            },
+          },
         }
       : {
           // ------------------ MuiAppBar ------------------ //
@@ -106,6 +114,14 @@ export const getDesignTokens = (mode: PaletteMode): DesignTokens => ({
                   backgroundColor: hexToRgba(surfaceDark.surfaceTint, 0.12),
                   borderColor: hexToRgba(surfaceDark.surfaceTint, 0.9),
                 },
+              },
+            },
+          },
+          // ------------------ MuiDivider ------------------ //
+          MuiDivider: {
+            styleOverrides: {
+              root: {
+                borderColor: outline.dark,
               },
             },
           },

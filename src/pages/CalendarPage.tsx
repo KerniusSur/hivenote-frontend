@@ -1,6 +1,12 @@
 /* eslint-disable max-depth */
 import { AddRounded } from "@mui/icons-material";
-import { Box, Hidden, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Hidden,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import {
   EventCreateRequest,
   EventResponse,
@@ -24,9 +30,10 @@ import {
   type View,
 } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import "src/components/calendar/Calendar.css";
 import { createApi } from "utils/api/ApiCreator";
 import { getDate } from "utils/ObjectUtils";
+import { surfaceDark, surfaceLight } from "utils/theme/colors";
+import "components/calendar/Calendar.css";
 
 moment.tz.setDefault("Europe/Vilnius");
 const CalendarPage = () => {
@@ -61,6 +68,7 @@ const CalendarPage = () => {
   });
   moment.locale("lt");
   const localizer = momentLocalizer(moment);
+  const theme = useTheme();
   const calendarRef = useRef(null);
   const eventAPI = useRef(createApi("event") as Events);
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -451,123 +459,131 @@ const CalendarPage = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        height: isMobile ? "150%" : "100%",
-        gap: isMobile ? "1rem" : "2rem",
-        padding: isMobile ? "1rem" : "3rem",
-        paddingBottom: "8rem",
-        boxSizing: "border-box",
+        marginTop: "2rem",
+        marginBottom: "4rem",
+        height: "100%",
       }}
-      className="height600"
     >
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          flexDirection: "column",
+          width: "100%",
+          height: isMobile ? "150%" : "100%",
+          gap: isMobile ? "1rem" : "2rem",
+          boxSizing: "border-box",
         }}
       >
-        <Typography variant="h2">Calendar</Typography>
-        {!isMobile && (
-          <HiveButton
-            compact
-            startIcon={<AddRounded />}
-            variant="contained"
-            text="New appointment"
-            onClick={() => {
-              setEventDialogOpen({ open: true, objectId: null });
-            }}
-          />
-        )}
-      </Box>
-      <CalendarHeader
-        selectedDate={selectedDate}
-        selectedView={selectedView}
-        setSelectedDate={handleDateChange}
-        setSelectedView={handleViewChange}
-      />
-      <Box
-        sx={{
-          backgroundColor: "#FFFFFF",
-          borderRadius: "12px",
-          height: "100%",
-          padding: isMobile ? "0.75rem" : "1.5rem",
-          marginBottom: isMobile ? "4rem" : "0",
-        }}
-      >
-        <DnDCalendar
-          ref={calendarRef}
-          popup
-          showMultiDayTimes
-          resizable
-          selectable
-          style={{
-            width: "100%",
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
-          draggableAccessor={(event: any) => event.isDraggable}
-          defaultView="week"
-          localizer={localizer}
-          components={components}
-          toolbar={false}
-          defaultDate={defaultDate}
-          events={myEvents}
-          formats={formats}
-          date={selectedDate}
-          view={selectedView}
-          min={moment(selectedDate).hours(8).minutes(0).toDate()}
-          max={moment(selectedDate).hours(17).minutes(0).toDate()}
-          eventPropGetter={eventPropGetter}
-          dayPropGetter={dayPropGetter}
-          step={15}
-          views={views}
-          timeslots={4}
-          resizableAccessor={(event: any) =>
-            event.isResizable && !isPastDate(event.start)
-          }
-          selected={selectedCalendarEvent}
-          onSelectSlot={handleSelectSlot}
-          onEventDrop={moveEvent}
-          onEventResize={resizeEvent}
-          onSelectEvent={selectEvent}
-        />
-        <Hidden mdUp>
-          <Box
-            sx={{
-              display: "flex",
-              padding: "1rem",
-              position: "fixed",
-
-              right: "0",
-              bottom: "0",
-              zIndex: 99,
-            }}
-          >
+        >
+          <Typography variant="h2">Calendar</Typography>
+          {!isMobile && (
             <HiveButton
-              text="Appointment"
+              compact
               startIcon={<AddRounded />}
+              variant="contained"
+              text="New appointment"
               onClick={() => {
                 setEventDialogOpen({ open: true, objectId: null });
               }}
             />
-          </Box>
-        </Hidden>
-      </Box>
-      {eventDialogOpen.open && (
-        <EventCreateEditDialog
-          open={eventDialogOpen.open}
-          isEdit={eventDialogOpen.objectId !== "temp"}
-          dialogTitle={
-            eventDialogOpen.objectId ? "Edit appointment" : "New appointment"
-          }
-          event={selectedEventResponse}
-          newEvent={newCalendarEvent}
-          handleSubmit={handleSubmit}
-          handleClose={handleDialogClose}
-          handleCancel={handleDialogClose}
+          )}
+        </Box>
+        <CalendarHeader
+          selectedDate={selectedDate}
+          selectedView={selectedView}
+          setSelectedDate={handleDateChange}
+          setSelectedView={handleViewChange}
         />
-      )}
+        <Box
+          sx={{
+            backgroundColor:
+              theme.palette.mode === "light"
+                ? surfaceLight.surfaceContainerLow
+                : surfaceDark.surfaceContainerLow,
+            borderRadius: "12px",
+            height: "100%",
+            padding: isMobile ? "0.75rem" : "1.5rem",
+            marginBottom: isMobile ? "4rem" : "0",
+          }}
+        >
+          <DnDCalendar
+            ref={calendarRef}
+            popup
+            showMultiDayTimes
+            resizable
+            selectable
+            style={{
+              width: "100%",
+            }}
+            draggableAccessor={(event: any) => event.isDraggable}
+            defaultView="week"
+            localizer={localizer}
+            components={components}
+            toolbar={false}
+            defaultDate={defaultDate}
+            events={myEvents}
+            formats={formats}
+            date={selectedDate}
+            view={selectedView}
+            min={moment(selectedDate).hours(8).minutes(0).toDate()}
+            max={moment(selectedDate).hours(17).minutes(0).toDate()}
+            eventPropGetter={eventPropGetter}
+            dayPropGetter={dayPropGetter}
+            step={15}
+            views={views}
+            timeslots={4}
+            resizableAccessor={(event: any) =>
+              event.isResizable && !isPastDate(event.start)
+            }
+            selected={selectedCalendarEvent}
+            onSelectSlot={handleSelectSlot}
+            onEventDrop={moveEvent}
+            onEventResize={resizeEvent}
+            onSelectEvent={selectEvent}
+          />
+          <Hidden mdUp>
+            <Box
+              sx={{
+                display: "flex",
+                padding: "1rem",
+                position: "fixed",
+
+                right: "0",
+                bottom: "0",
+                zIndex: 99,
+              }}
+            >
+              <HiveButton
+                text="Appointment"
+                startIcon={<AddRounded />}
+                onClick={() => {
+                  setEventDialogOpen({ open: true, objectId: null });
+                }}
+              />
+            </Box>
+          </Hidden>
+        </Box>
+        {eventDialogOpen.open && (
+          <EventCreateEditDialog
+            open={eventDialogOpen.open}
+            isEdit={eventDialogOpen.objectId !== "temp"}
+            dialogTitle={
+              eventDialogOpen.objectId ? "Edit appointment" : "New appointment"
+            }
+            event={selectedEventResponse}
+            newEvent={newCalendarEvent}
+            handleSubmit={handleSubmit}
+            handleClose={handleDialogClose}
+            handleCancel={handleDialogClose}
+          />
+        )}
+      </Box>
     </Box>
   );
 };

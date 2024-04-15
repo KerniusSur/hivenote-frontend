@@ -60,9 +60,18 @@ const AppTheme = createTheme({
     MuiDivider: {
       styleOverrides: {
         root: {
-          width: "100%",
+          width: "1px",
         },
       },
+      variants: [
+        {
+          props: { orientation: "horizontal" },
+          style: {
+            width: "100%",
+            height: "1px",
+          },
+        },
+      ],
     },
     // ------------------ MuiTypography ------------------ //
     MuiTypography: {

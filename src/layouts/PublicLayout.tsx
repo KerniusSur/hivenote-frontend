@@ -16,10 +16,12 @@ const PublicLayout = () => {
         drawerWidth={drawerWidth}
         setIsDrawerOpen={setIsDrawerOpen}
       />
-      <Main open={isDrawerOpen}>
+      <MainContainer open={isDrawerOpen}>
         <DrawerHeader />
-        <Outlet />
-      </Main>
+        <PaddingContainer>
+          <Outlet />
+        </PaddingContainer>
+      </MainContainer>
     </OutsideContainer>
   );
 };
@@ -30,13 +32,17 @@ export const OutsideContainer = styled(Box)(() => {
     flexDirection: "column",
     height: "100%",
     backgroundColor: "#fff",
+    overflow: "auto",
   };
 });
 
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
+const MainContainer = styled("main", {
+  shouldForwardProp: (prop) => prop !== "open",
+})<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
+  overflow: "auto",
   padding: theme.spacing(3),
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
@@ -52,6 +58,12 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     }),
     marginLeft: drawerWidth,
   }),
+}));
+
+export const PaddingContainer = styled(Box)(({ theme }) => ({
+  height: "100%",
+  boxSizing: "border-box",
+  padding: "1rem",
 }));
 
 export const DrawerHeader = styled("div")(({ theme }) => ({

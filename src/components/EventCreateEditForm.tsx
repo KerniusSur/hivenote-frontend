@@ -90,38 +90,33 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
                 placeholder="Location"
                 required
               />
-              <SectionContainer
+              <Divider
+                orientation="horizontal"
                 sx={{
-                  border: isMobile ? "none" : "1px solid #E9E9EB",
-                  padding: isMobile ? "0" : "1rem",
+                  marginTop: "1rem",
+                  marginLeft: "0rem",
                 }}
-              >
-                <HiveDatePicker title="Date" label="date" />
-                <Box>
-                  <Typography
-                    variant="body1"
-                    fontSize={14}
-                    fontWeight={600}
-                    color="text.secondary"
-                  >
-                    Time
+              />
+              <HiveDatePicker title="Date" label="date" />
+              <Box>
+                <Typography variant="body1" fontSize={14} fontWeight={600}>
+                  Time
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-end",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                  }}
+                >
+                  <HiveTimePicker isClockInterface label="startTime" />
+                  <Typography variant="body1" alignSelf="center">
+                    to
                   </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "flex-end",
-                      justifyContent: "space-between",
-                      gap: "1rem",
-                    }}
-                  >
-                    <HiveTimePicker isClockInterface label="startTime" />
-                    <Typography variant="body1" alignSelf="center">
-                      to
-                    </Typography>
-                    <HiveTimePicker isClockInterface label="endTime" />
-                  </Box>
+                  <HiveTimePicker isClockInterface label="endTime" />
                 </Box>
-              </SectionContainer>
+              </Box>
             </FormContainer>
             <Box
               sx={{
@@ -183,7 +178,7 @@ const FormOuterContainer = styled(Box)(() => ({
   padding: "1.5rem",
   boxSizing: "border-box",
   gap: "1rem",
-  backgroundColor: "#FFFFFF",
+  // backgroundColor: "#FFFFFF",
   borderRadius: "12px",
   height: "100%",
 }));
@@ -203,7 +198,7 @@ const SectionContainer = styled(Box)(() => {
     width: "100%",
     boxSizing: "border-box",
     gap: "1rem",
-    backgroundColor: "#FFFFFF",
+    // backgroundColor: "#FFFFFF",
     borderRadius: "12px",
     border: isMobile ? "none" : "1px solid #E9E9EB",
     padding: isMobile ? "0" : "1rem",
@@ -281,7 +276,7 @@ export const StaticMobileButtonFooter = (
         position: isMobile ? "fixed" : "none",
         bottom: isMobile ? "0" : "none",
         right: "0",
-        backgroundColor: "#FFFFFF",
+        // backgroundColor: "#FFFFFF",
         gap: isMobile ? "1rem" : "1.5rem",
       }}
     >
@@ -303,14 +298,14 @@ export const StaticMobileButtonFooter = (
         {isMobile && isEdit && (
           <HiveButton
             text="Delete"
-            color="inherit"
             startIcon={<DeleteRounded />}
+            variant="outlined"
             onClick={handleDeleteClick}
           />
         )}
         <HiveButton
           text={isEdit ? "Save" : "Create"}
-          color="primary"
+          variant="contained"
           onClick={async () => formik.submitForm()}
         />
       </Box>

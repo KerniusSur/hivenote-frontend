@@ -1,5 +1,17 @@
-import { Box, Button, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { View } from "react-big-calendar";
+import {
+  elevationDark,
+  elevationLight,
+  surfaceDark,
+  surfaceLight,
+} from "utils/theme/colors";
 
 interface CalendarViewSelectorProps {
   selectedView: View;
@@ -11,6 +23,7 @@ export const CalendarViewSelector = ({
   setSelectedView,
 }: CalendarViewSelectorProps) => {
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const theme = useTheme();
 
   return (
     <Box
@@ -19,7 +32,10 @@ export const CalendarViewSelector = ({
         padding: "4px",
         boxSizing: "border-box",
         gap: "4px",
-        backgroundColor: "#F4F4F5",
+        backgroundColor:
+          theme.palette.mode === "light"
+            ? surfaceLight.surfaceContainerHighest
+            : surfaceDark.surfaceContainerHighest,
         borderRadius: "4px",
         width: isMobile ? "100%" : "fit-content",
       }}
@@ -27,16 +43,19 @@ export const CalendarViewSelector = ({
       <Button
         sx={{
           padding: "8px 16px",
-          backgroundColor: selectedView === "day" ? "#FFF" : "#F4F4F5",
+          backgroundColor:
+            selectedView === "day"
+              ? theme.palette.mode === "light"
+                ? surfaceLight.surfaceContainer
+                : surfaceDark.surfaceContainer
+              : "transparent",
           transition: "all 0.3s ease",
           boxShadow:
             selectedView === "day"
-              ? "0px 1px 4px 0px rgba(0, 0, 0, 0.19);"
+              ? theme.palette.mode === "light"
+                ? elevationLight.elevation1
+                : elevationDark.elevation1
               : "none",
-          "&:hover": {
-            opacity: 0.7,
-            backgroundColor: "#FFF",
-          },
           width: isMobile ? "100%" : "fit-content",
         }}
         onClick={() => setSelectedView("day")}
@@ -44,7 +63,7 @@ export const CalendarViewSelector = ({
         <Typography
           variant="body3"
           fontWeight={600}
-          color={selectedView === "day" ? "text.primary" : "#585C65"}
+          color={selectedView === "day" ? "text.primary" : "text.disabled"}
         >
           Day
         </Typography>
@@ -52,15 +71,21 @@ export const CalendarViewSelector = ({
       <Button
         sx={{
           padding: "8px 16px",
-          backgroundColor: selectedView === "week" ? "#FFF" : "#F4F4F5",
+          backgroundColor:
+            selectedView === "week"
+              ? theme.palette.mode === "light"
+                ? surfaceLight.surfaceContainer
+                : surfaceDark.surfaceContainer
+              : "transparent",
           transition: "all 0.3s ease",
           boxShadow:
             selectedView === "week"
-              ? "0px 1px 4px 0px rgba(0, 0, 0, 0.19);"
+              ? theme.palette.mode === "light"
+                ? elevationLight.elevation1
+                : elevationDark.elevation1
               : "none",
           "&:hover": {
-            opacity: 0.7,
-            backgroundColor: "#FFF",
+            // opacity: 0.9,
           },
           width: isMobile ? "100%" : "fit-content",
         }}
@@ -69,7 +94,7 @@ export const CalendarViewSelector = ({
         <Typography
           variant="body3"
           fontWeight={600}
-          color={selectedView === "week" ? "text.primary" : "#585C65"}
+          color={selectedView === "week" ? "text.primary" : "text.disabled"}
         >
           Week
         </Typography>
