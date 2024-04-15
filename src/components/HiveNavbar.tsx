@@ -1,20 +1,30 @@
 import { MenuOutlined } from "@mui/icons-material";
-import { Box, Divider, IconButton, styled, Toolbar } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  styled,
+  Switch,
+  Toolbar,
+  useTheme,
+} from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { Auth } from "api/Auth";
 import { NoteCreateRequest, NoteResponse } from "api/data-contracts";
 import { Notes } from "api/Notes";
+import HiveNoteTextLogoWhite from "assets/hivenote-text-logo-white.svg";
 import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import HiveButton from "components/HiveButton";
 import HiveDrawer from "components/HiveDrawer";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createApi } from "utils/api/ApiCreator";
 import useAuthStore from "utils/stores/AuthStore";
 import useNoteStore from "utils/stores/NoteStore";
 import useSocketStore from "utils/stores/SocketStore";
+import { ThemeContext } from "utils/theme/ThemeContextProvider";
 
 interface HiveNavbarProps {
   isDrawerOpen: boolean;
@@ -24,13 +34,17 @@ interface HiveNavbarProps {
 
 const HivePublicNavbar = (props: HiveNavbarProps) => {
   const { isDrawerOpen, drawerWidth, setIsDrawerOpen } = props;
-  const navigate = useNavigate();
   const { account, isStateReady } = useAuthStore();
+  const { note } = useSocketStore();
   const { activeNoteId, setActiveNoteId, hasUpdates, setHasUpdates } =
     useNoteStore();
-  const { note } = useSocketStore();
+
+  const navigate = useNavigate();
+  const theme = useTheme();
+
   const authAPI = useRef(createApi("auth") as Auth);
   const noteAPI = useRef(createApi("note") as Notes);
+
   const [ownerNotes, setOwnerNotes] = useState<NoteResponse[]>([]);
   const [sharedNotes, setSharedNotes] = useState<NoteResponse[]>([]);
 
@@ -147,7 +161,11 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                     style={{
                       height: "18px",
                     }}
-                    src={HiveNoteTextLogo as any}
+                    src={
+                      (theme.palette.mode === "light"
+                        ? HiveNoteTextLogo
+                        : HiveNoteTextLogoWhite) as any
+                    }
                     alt="HiveNote"
                     onClick={() => {
                       navigate("/");
@@ -169,11 +187,14 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                 <IconButton
                   sx={{
                     display: "flex",
-                    color: "#0E0E0E",
                   }}
                   onClick={toggleDrawer}
                 >
-                  <MenuOutlined />
+                  <MenuOutlined 
+                    sx={{
+                      color: theme.palette.primary.main
+                    }}
+                  />
                 </IconButton>
               )}
               {isStateReady && !account && (
@@ -181,7 +202,11 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                   style={{
                     height: "18px",
                   }}
-                  src={HiveNoteTextLogo as any}
+                  src={
+                    (theme.palette.mode === "light"
+                      ? HiveNoteTextLogo
+                      : HiveNoteTextLogoWhite) as any
+                  }
                   alt="HiveNote"
                 />
               )}
@@ -204,6 +229,7 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                       gap: "16px",
                     }}
                   >
+                    <ThemeSwitch />
                     <HiveButton
                       text="Login"
                       variant="outlined"
@@ -219,12 +245,20 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                   </Box>
                 )}
                 {isStateReady && account && (
-                  <HiveButton
-                    text="Logout"
-                    variant="outlined"
-                    compact
-                    onClick={logout}
-                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: "16px",
+                    }}
+                  >
+                    <ThemeSwitch />
+                    <HiveButton
+                      text="Logout"
+                      variant="outlined"
+                      compact
+                      onClick={logout}
+                    />
+                  </Box>
                 )}
               </>
             </Box>
@@ -264,4 +298,16 @@ const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
+
+export const ThemeSwitch = () => {
+  const theme = useTheme();
+  const { switchColorMode } = useContext(ThemeContext);
+
+  return (
+    <Switch
+      checked={theme.palette.mode === "dark"}
+      onChange={() => switchColorMode()}
+    />
+  );
+};
 export default HivePublicNavbar;

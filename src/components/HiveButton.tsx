@@ -28,12 +28,6 @@ const HiveButton = (props: HiveButtonProps) => {
       {startIcon}
       <Typography
         variant="button"
-        sx={{
-          color:
-            props.variant === "contained"
-              ? AppTheme.palette.white
-              : AppTheme.palette.black,
-        }}
       >
         {props.text}
       </Typography>

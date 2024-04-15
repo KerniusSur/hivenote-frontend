@@ -44,6 +44,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   }),
   // marginLeft: `-${drawerWidth}px`,
   maxWidth: "100%",
+  backgroundColor: theme.palette.background.default,
   ...(open && {
     transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
