@@ -2,7 +2,7 @@ import EditorJS, { EditorConfig } from "@editorjs/editorjs";
 import { Box, SxProps } from "@mui/material";
 import { EDITOR_JS_TOOLS } from "config/editorToolsConfig";
 import React, { memo, useEffect, useRef } from "react";
-import './HiveEditor.css'
+import "./HiveEditor.css";
 
 interface HiveEditorProps extends EditorConfig {
   data: any;
