@@ -17,12 +17,15 @@ import {
   MenuItem,
   styled,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { NoteResponse } from "api/data-contracts";
+import HiveNoteTextLogoWhite from "assets/hivenote-text-logo-white.svg";
 import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import { DrawerHeader } from "layouts/PublicLayout";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { hexToRgba } from "utils/ObjectUtils";
 import useNoteStore from "utils/stores/NoteStore";
 
 interface HiveDrawerProps {
@@ -50,6 +53,7 @@ const HiveDrawer = (props: HiveDrawerProps) => {
 
   const { activeNoteId } = useNoteStore();
   const navigate = useNavigate();
+  const theme = useTheme();
 
   return (
     <Drawer
@@ -88,7 +92,11 @@ const HiveDrawer = (props: HiveDrawerProps) => {
               height: "18px",
               marginLeft: "24px",
             }}
-            src={HiveNoteTextLogo as any}
+            src={
+              (theme.palette.mode === "light"
+                ? HiveNoteTextLogo
+                : HiveNoteTextLogoWhite) as any
+            }
             alt="HiveNote"
             onClick={() => {
               navigate("/");
@@ -126,18 +134,18 @@ interface DrawerContentProps {
   handleCreateNote: (parentId?: string) => void;
   handleSelectNote: (noteId: string) => void;
   handleDeleteNote: (noteId: string) => void;
-  activeNoteId?: string;
+  activeNoteId: string | undefined;
 }
 
 const DrawerContent = (props: DrawerContentProps) => {
   const {
     ownerNotes,
     sharedNotes,
+    activeNoteId,
     handleSelectNote,
     handleCreateNote,
     handleDeleteNote,
   } = props;
-  const { activeNoteId } = useNoteStore();
   const navigate = useNavigate();
 
   const [menuState, setMenuState] = useState<{
@@ -182,6 +190,7 @@ const DrawerContent = (props: DrawerContentProps) => {
         component={Button}
         onClick={() => handleCreateNote()}
         sx={{
+          borderRadius: "0px",
           "&:hover": {
             cursor: "pointer",
           },
@@ -196,13 +205,14 @@ const DrawerContent = (props: DrawerContentProps) => {
           }}
         >
           <AddToPhotosRounded />
-          <Typography variant="body2">Add new note</Typography>
+          <Typography variant="title2">Add new note</Typography>
         </Box>
       </Box>
       <Box
         component={Button}
         onClick={() => navigate("/calendar")}
         sx={{
+          borderRadius: "0px",
           "&:hover": {
             cursor: "pointer",
           },
@@ -217,7 +227,7 @@ const DrawerContent = (props: DrawerContentProps) => {
           }}
         >
           <CalendarTodayOutlined />
-          <Typography variant="body2">Calendar</Typography>
+          <Typography variant="title2">Calendar</Typography>
         </Box>
       </Box>
       <Box
@@ -315,11 +325,11 @@ const DrawerContent = (props: DrawerContentProps) => {
               handleMenuClose();
             }}
           >
-            <Typography variant="body4">Delete</Typography>
+            <Typography variant="body2">Delete</Typography>
           </MenuItem>
         )}
         <MenuItem onClick={handleMenuClose}>
-          <Typography variant="body4">Rename</Typography>
+          <Typography variant="body2">Rename</Typography>
         </MenuItem>
       </Menu>
     </Box>
@@ -344,6 +354,7 @@ export const ExpandNoteIcon = (props: ExpandNoteIconProps) => {
       {isExpanded ? (
         <KeyboardArrowDownRounded
           sx={{
+            color: "text.primary",
             width: "20px",
             height: "20px",
           }}
@@ -351,6 +362,7 @@ export const ExpandNoteIcon = (props: ExpandNoteIconProps) => {
       ) : (
         <KeyboardArrowRightRounded
           sx={{
+            color: "text.primary",
             width: "20px",
             height: "20px",
           }}
@@ -374,6 +386,7 @@ export const NoteOptions = ({
   ) => void;
   depth?: number;
 }) => {
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -392,6 +405,7 @@ export const NoteOptions = ({
       >
         <MoreHorizRounded
           sx={{
+            color: theme.palette.text.primary,
             width: "16px",
             height: "16px",
           }}
@@ -408,6 +422,7 @@ export const NoteOptions = ({
         >
           <AddRounded
             sx={{
+              color: theme.palette.text.primary,
               width: "16px",
               height: "16px",
             }}
@@ -418,27 +433,23 @@ export const NoteOptions = ({
   );
 };
 
-export const ListNoteItem = styled(ListItem)(({
-  noteId,
-  activeNoteId,
-}: {
-  noteId: string;
-  activeNoteId?: string;
-}) => {
-  return {
-    boxSizing: "border-box",
-    padding: "0px",
-    paddingRight: "8px",
-    "&:hover": {
-      cursor: "pointer",
-      backgroundColor: "#F1F1F1",
-    },
-    backgroundColor:
-      noteId && activeNoteId && noteId === activeNoteId
-        ? "#f7f7f7"
-        : "transparent",
-  };
-});
+export const ListNoteItem = styled(ListItem)(
+  ({ theme }) =>
+    ({ noteId, activeNoteId }: { noteId: string; activeNoteId?: string }) => {
+      return {
+        boxSizing: "border-box",
+        padding: "0px",
+        paddingRight: "8px",
+        "&:hover": {
+          cursor: "pointer",
+        },
+        backgroundColor:
+          noteId && activeNoteId && noteId === activeNoteId
+            ? `${hexToRgba(theme.palette.primary.main, 0.2)}`
+            : "transparent",
+      };
+    }
+);
 
 interface RecursiveNoteListProps {
   depth?: number;
@@ -474,9 +485,8 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
       }}
     >
       {notes.map((note) => (
-        <>
+        <div key={note.id}>
           <ListNoteItem
-            key={note.id}
             noteId={note.id}
             activeNoteId={activeNoteId}
             sx={{
@@ -515,7 +525,7 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
               >
                 <Typography
                   noWrap
-                  variant="body3"
+                  variant="title2"
                   sx={{
                     display: "block",
                     overflow: "hidden",
@@ -551,7 +561,7 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
               />
             )}
           </Box>
-        </>
+        </div>
       ))}
     </Box>
   );

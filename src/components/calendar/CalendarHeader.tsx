@@ -5,10 +5,13 @@ import {
   IconButton,
   Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import CalendarViewSelector from "components/calendar/CalendarViewSelector";
 import moment from "moment";
 import { View } from "react-big-calendar";
+import { hexToRgba } from "utils/ObjectUtils";
+import { surfaceDark, surfaceLight } from "utils/theme/colors";
 
 interface CalendarHeaderProps {
   selectedView: View;
@@ -21,6 +24,7 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
   const { selectedView, selectedDate, setSelectedDate, setSelectedView } =
     props;
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const theme = useTheme();
 
   const handleNextWeek = () => {
     setSelectedDate(moment(selectedDate).add(1, "week").toDate());
@@ -47,18 +51,31 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
   };
 
   return (
-    <Box display="flex" width="100%">
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+      }}
+    >
       {!isMobile && (
         <>
           <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            marginRight="auto"
-            gap="2rem"
-            flex={1.3}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginRight: "auto",
+              flex: 1.3,
+              gap: "2rem",
+            }}
           >
-            <Box display="flex" alignItems="center" gap="16px">
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "16px",
+              }}
+            >
               {selectedView !== "day" && (
                 <Typography
                   variant="h4"
@@ -72,15 +89,8 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
               )}
               {selectedView === "week" && (
                 <>
-                  <Divider
-                    flexItem
-                    orientation="vertical"
-                    sx={{
-                      width: "1px",
-                      borderColor: "rgba(0, 0, 0, 0.5)",
-                    }}
-                  />
-                  <Typography variant="h5" color="text.tertiary" fontSize={18}>
+                  <Divider flexItem orientation="vertical" />
+                  <Typography variant="h5" fontSize={18}>
                     {moment(selectedDate).format("w")} week
                   </Typography>
                 </>
@@ -113,10 +123,19 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
             <IconButton
               sx={{
                 padding: "12px",
-                backgroundColor: "#F4F4F5",
                 borderRadius: "12px",
                 height: "44px",
                 width: "44px",
+                backgroundColor:
+                  theme.palette.mode === "light"
+                    ? surfaceLight.surfaceContainerHighest
+                    : surfaceDark.surfaceContainerHighest,
+                "&:hover": {
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? surfaceLight.surfaceContainerHigh
+                      : surfaceDark.surfaceContainerHigh,
+                },
               }}
               onClick={
                 selectedView === "day"
@@ -126,15 +145,24 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
                     : handlePreviousMonth
               }
             >
-              <ChevronLeftRounded />
+              <ChevronLeftRounded color="primary" />
             </IconButton>
             <IconButton
               sx={{
                 padding: "12px",
-                backgroundColor: "#F4F4F5",
                 borderRadius: "12px",
                 height: "44px",
                 width: "44px",
+                backgroundColor:
+                  theme.palette.mode === "light"
+                    ? surfaceLight.surfaceContainerHighest
+                    : surfaceDark.surfaceContainerHighest,
+                "&:hover": {
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? surfaceLight.surfaceContainerHigh
+                      : surfaceDark.surfaceContainerHigh,
+                },
               }}
               onClick={
                 selectedView === "day"
@@ -144,7 +172,7 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
                     : handleNextMonth
               }
             >
-              <ChevronRightRounded />
+              <ChevronRightRounded color="primary" />
             </IconButton>
           </Box>
         </>
@@ -193,10 +221,19 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
               <IconButton
                 sx={{
                   padding: "12px",
-                  backgroundColor: "#F4F4F5",
                   borderRadius: "12px",
                   height: "44px",
                   width: "44px",
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? surfaceLight.surfaceContainerHighest
+                      : surfaceDark.surfaceContainerHighest,
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "light"
+                        ? surfaceLight.surfaceContainerHigh
+                        : surfaceDark.surfaceContainerHigh,
+                  },
                 }}
                 onClick={
                   selectedView === "day"
@@ -206,15 +243,24 @@ const CalendarHeader = (props: CalendarHeaderProps) => {
                       : handlePreviousMonth
                 }
               >
-                <ChevronLeftRounded />
+                <ChevronLeftRounded color="primary" />
               </IconButton>
               <IconButton
                 sx={{
                   padding: "12px",
-                  backgroundColor: "#F4F4F5",
                   borderRadius: "12px",
                   height: "44px",
                   width: "44px",
+                  backgroundColor:
+                    theme.palette.mode === "light"
+                      ? surfaceLight.surfaceContainerHighest
+                      : surfaceDark.surfaceContainerHighest,
+                  "&:hover": {
+                    backgroundColor:
+                      theme.palette.mode === "light"
+                        ? surfaceLight.surfaceContainerHigh
+                        : surfaceDark.surfaceContainerHigh,
+                  },
                 }}
                 onClick={
                   selectedView === "day"

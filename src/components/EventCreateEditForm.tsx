@@ -10,6 +10,7 @@ import HiveTimePicker from "components/HiveTimePicker";
 import dayjs from "dayjs";
 import { Form, Formik, FormikHelpers } from "formik";
 import CalendarEvent from "models/calendar/CalendarEvent";
+import moment from "moment";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { createApi } from "utils/api/ApiCreator";
@@ -27,8 +28,7 @@ interface EventCreateEditFormProps {
 }
 
 const EventCreateEditForm = (props: EventCreateEditFormProps) => {
-  const { event, isEdit, handleSubmit, handleCancel } = props;
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const { event, newEvent, isEdit, handleSubmit, handleCancel } = props;
   const eventAPI = useRef(createApi("event") as Events);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
@@ -61,7 +61,12 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
     <FormOuterContainer>
       <Formik
         enableReinitialize
-        initialValues={getInitialValues(event)}
+        validateOnMount
+        initialValues={
+          newEvent
+            ? getInitialValuesFromCalendarEvent(newEvent)
+            : getInitialValues(event)
+        }
         validationSchema={getValidationSchema()}
         onSubmit={onSubmit}
       >
@@ -90,38 +95,33 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
                 placeholder="Location"
                 required
               />
-              <SectionContainer
+              <Divider
+                orientation="horizontal"
                 sx={{
-                  border: isMobile ? "none" : "1px solid #E9E9EB",
-                  padding: isMobile ? "0" : "1rem",
+                  marginTop: "1rem",
+                  marginLeft: "0rem",
                 }}
-              >
-                <HiveDatePicker title="Date" label="date" />
-                <Box>
-                  <Typography
-                    variant="body1"
-                    fontSize={14}
-                    fontWeight={600}
-                    color="text.secondary"
-                  >
-                    Time
+              />
+              <HiveDatePicker title="Date" label="date" />
+              <Box>
+                <Typography variant="body1" fontSize={14} fontWeight={600}>
+                  Time
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-end",
+                    justifyContent: "space-between",
+                    gap: "1rem",
+                  }}
+                >
+                  <HiveTimePicker isClockInterface label="startTime" />
+                  <Typography variant="body1" alignSelf="center">
+                    to
                   </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "flex-end",
-                      justifyContent: "space-between",
-                      gap: "1rem",
-                    }}
-                  >
-                    <HiveTimePicker isClockInterface label="startTime" />
-                    <Typography variant="body1" alignSelf="center">
-                      to
-                    </Typography>
-                    <HiveTimePicker isClockInterface label="endTime" />
-                  </Box>
+                  <HiveTimePicker isClockInterface label="endTime" />
                 </Box>
-              </SectionContainer>
+              </Box>
             </FormContainer>
             <Box
               sx={{
@@ -183,7 +183,7 @@ const FormOuterContainer = styled(Box)(() => ({
   padding: "1.5rem",
   boxSizing: "border-box",
   gap: "1rem",
-  backgroundColor: "#FFFFFF",
+  // backgroundColor: "#FFFFFF",
   borderRadius: "12px",
   height: "100%",
 }));
@@ -203,7 +203,7 @@ const SectionContainer = styled(Box)(() => {
     width: "100%",
     boxSizing: "border-box",
     gap: "1rem",
-    backgroundColor: "#FFFFFF",
+    // backgroundColor: "#FFFFFF",
     borderRadius: "12px",
     border: isMobile ? "none" : "1px solid #E9E9EB",
     padding: isMobile ? "0" : "1rem",
@@ -237,9 +237,26 @@ const getInitialValues = (event?: EventResponse): EventFormValues => {
     title: event.title,
     description: event.description,
     location: event.location,
-    date: new Date(event.eventStart),
-    eventStart: new Date(event.eventStart),
-    eventEnd: new Date(event.eventEnd),
+    date: moment(event.eventStart).toDate(),
+    eventStart: moment(event.eventStart).toDate(),
+    eventEnd: moment(event.eventEnd).toDate(),
+  };
+};
+
+const getInitialValuesFromCalendarEvent = (
+  newEvent?: CalendarEvent
+): EventFormValues => {
+  if (!newEvent) {
+    return initialValues;
+  }
+
+  return {
+    title: newEvent.title,
+    description: "",
+    location: "",
+    date: moment(newEvent.start).toDate(),
+    eventStart: moment(newEvent.start).toDate(),
+    eventEnd: moment(newEvent.end).toDate(),
   };
 };
 
@@ -281,7 +298,6 @@ export const StaticMobileButtonFooter = (
         position: isMobile ? "fixed" : "none",
         bottom: isMobile ? "0" : "none",
         right: "0",
-        backgroundColor: "#FFFFFF",
         gap: isMobile ? "1rem" : "1.5rem",
       }}
     >
@@ -303,14 +319,14 @@ export const StaticMobileButtonFooter = (
         {isMobile && isEdit && (
           <HiveButton
             text="Delete"
-            color="inherit"
             startIcon={<DeleteRounded />}
+            variant="outlined"
             onClick={handleDeleteClick}
           />
         )}
         <HiveButton
           text={isEdit ? "Save" : "Create"}
-          color="primary"
+          variant="contained"
           onClick={async () => formik.submitForm()}
         />
       </Box>

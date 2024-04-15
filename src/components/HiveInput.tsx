@@ -6,6 +6,7 @@ import {
   OutlinedTextFieldProps,
   TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import { useField } from "formik";
 import { useState } from "react";
@@ -21,10 +22,11 @@ const HiveInput = (props: HiveInputProps) => {
   const { name, title, startIcon, endIcon, ...other } = props;
   const [field, meta, helpers] = useField(props.name);
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -47,7 +49,6 @@ const HiveInput = (props: HiveInputProps) => {
       )}
       <TextField
         fullWidth
-        className="textfield-input"
         error={meta.touched && Boolean(meta.error)}
         InputLabelProps={{
           style: {
@@ -62,6 +63,7 @@ const HiveInput = (props: HiveInputProps) => {
                 "&:hover": {
                   cursor: "pointer",
                 },
+                color: theme.palette.text.secondary,
                 marginRight: "-8px",
               }}
               onClick={togglePasswordVisibility}
@@ -81,7 +83,7 @@ const HiveInput = (props: HiveInputProps) => {
         }
       />
       {meta.touched && meta.error && (
-        <Typography variant="body4" color="#EB0E0E">
+        <Typography variant="body2" color="error.main">
           {meta.error}
         </Typography>
       )}

@@ -1,7 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Google } from "@mui/icons-material";
+import { Box, Typography, useTheme } from "@mui/material";
 import { Auth } from "api/Auth";
 import { EmailPasswordLoginRequest, RegisterRequest } from "api/data-contracts";
-import GoogleLogo from "assets/google-logo.svg";
 import HiveButton from "components/HiveButton";
 import HiveInput from "components/HiveInput";
 import { Form, Formik } from "formik";
@@ -16,6 +16,7 @@ interface RegisterLoginPageProps {
 
 const RegisterLoginPage = (props: RegisterLoginPageProps) => {
   const authAPI = useRef(createApi("auth") as Auth);
+  const theme = useTheme();
 
   const handleSubmit = async (values: AuthFormValues) => {
     if (isRegisterPage) {
@@ -75,13 +76,12 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
           <Box
             sx={{
               display: "flex",
-
               justifyContent: "center",
               width: "50%",
               padding: "12px 24px",
               borderBottom: isRegisterPage
                 ? "1px solid transparent"
-                : "1px solid #000000",
+                : `1px solid ${theme.palette.text.primary}`,
               cursor: "pointer",
               transition: "all 0.3s ease-in-out",
             }}
@@ -90,10 +90,10 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
             }}
           >
             <Typography
-              variant="body3"
+              variant="title1"
               align="center"
               sx={{
-                color: !isRegisterPage ? "#000000" : "#505050",
+                opacity: !isRegisterPage ? 1 : 0.7,
               }}
             >
               Log in
@@ -107,7 +107,7 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
               padding: "12px 24px",
               cursor: "pointer",
               borderBottom: isRegisterPage
-                ? "1px solid #000000"
+                ? `1px solid ${theme.palette.text.primary}`
                 : "1px solid transparent",
               transition: "all 0.3s ease-in-out",
             }}
@@ -116,10 +116,10 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
             }}
           >
             <Typography
-              variant="body3"
+              variant="title1"
               align="center"
               sx={{
-                color: isRegisterPage ? "#000000" : "#505050",
+                opacity: isRegisterPage ? 1 : 0.7,
               }}
             >
               Sign up
@@ -182,7 +182,7 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
               text={
                 isRegisterPage ? "Sign up with Google" : "Log in with Google"
               }
-              startIcon={<img src={GoogleLogo as any} alt="Google" />}
+              startIcon={<Google />}
             />
           </Form>
         </Formik>

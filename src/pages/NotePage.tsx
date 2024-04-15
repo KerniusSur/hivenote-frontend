@@ -1,5 +1,7 @@
-import { Box, Input, Typography } from "@mui/material";
-import HiveEditor from "components/HiveEditor";
+import { Box, Input, useTheme } from "@mui/material";
+import AppTheme from "AppTheme";
+import HiveEditor from "components/editor/HiveEditor";
+import "components/editor/HiveEditor.css";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
 import EditorBlock from "models/editor/EditorBlock";
 import EditorData from "models/editor/EditorData";
@@ -12,11 +14,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import useSocketStore from "utils/stores/SocketStore";
-import { v4 as uuid } from "uuid";
-import "../components/HiveEditor.css";
+import "@fontsource/roboto";
+import "@fontsource/roboto/700.css";
 import "./Editor.css";
-import LinkedListUtil from "utils/LinkedListUtil";
-import LinkedList from "models/general/LinkedList";
 
 export interface NoteDataItem {
   text?: string;
@@ -26,6 +26,7 @@ export interface NoteDataItem {
 const NotePage = () => {
   const { noteId } = useParams();
   const { socket, receivedMessages } = useSocketStore();
+  const theme = useTheme();
 
   const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -69,10 +70,6 @@ const NotePage = () => {
     fetchNote();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteId, socket?.connected]);
-
-  useEffect(() => {
-    console.log("Received messages: ", receivedMessages);
-  }, [receivedMessages]);
 
   const handleNoteTitleChange = async (title?: string, coverUrl?: string) => {
     if (!noteId || !editorData?.blocks) {
@@ -121,9 +118,9 @@ const NotePage = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "24px",
-        padding: "48px",
+        gap: "1.5rem",
         width: "100%",
+        height: "100%",
         boxSizing: "border-box",
       }}
     >
@@ -132,18 +129,25 @@ const NotePage = () => {
         placeholder="Untitled"
         value={noteMessage?.title}
         sx={{
+          fontFamily: "Roboto",
+          fontSize: "36px",
+          fontWeight: 700,
+          lineHeight: "44px",
           border: "none",
+          alignSelf: "center",
           ":before": {
             borderBottom: "none !important",
           },
           ":after": {
             borderBottom: "none !important",
           },
-          fontFamily: "Roboto, sans-serif",
-          fontSize: "40px",
-          lineHeight: "120%",
-          fontWeight: 600,
-          color: "#000000",
+          paddingLeft: "1rem",
+          marginBottom: "-1.5rem",
+          paddingBottom: "1rem",
+          paddingTop: "0.5rem",
+          borderRadius: "12px 12px 0px 0px",
+          width: "100%",
+          maxWidth: "1400px",
         }}
         onChange={(e) => {
           handleNoteTitleChange(e.target.value, noteMessage?.coverUrl);
@@ -155,28 +159,31 @@ const NotePage = () => {
           width: "100%",
           justifyContent: "center",
           boxSizing: "border-box",
+          height: "100%",
         }}
       >
         <Box
           className="editor"
           style={{
             width: "100%",
+            height: "100%",
+            backgroundColor: AppTheme.palette.background.paper,
           }}
         >
           {editorData && !isLoading ? (
             <HiveEditor
               data={editorData}
               onChange={handleNoteContentChange}
-              editorblock={"editorjs-container"}
+              holder={"editorjs-container"}
             />
           ) : (
             <HiveLoadingSpinner size="large" />
           )}
         </Box>
       </Box>
-      <Box>
+      {/* <Box>
         <Typography variant="h6">{testJsonOutput}</Typography>
-      </Box>
+      </Box> */}
     </Box>
   );
 };
@@ -184,7 +191,6 @@ const NotePage = () => {
 const mapNoteToEditorData = (note: NoteMessage): EditorData => {
   const editorData: EditorData = {
     time: 0,
-    // blocks: getBlocksFromComponents(note.components),
     blocks: getBlockListFromComponents(note.components),
   };
 
@@ -260,44 +266,5 @@ const getComponentListFromBlocks = (
 
   return components;
 };
-
-//  <Box>
-//    {editorData?.blocks.map((block: any, index: number) => (
-//      <Box
-//        key={index}
-//        sx={{
-//          display: "flex",
-//          flexDirection: "column",
-//          gap: "4px",
-//          border: "1px solid #0E0E0E",
-//          borderRadius: "8px",
-//        }}
-//      >
-//        <Typography variant="h6">{block.type}</Typography>
-//        <Typography>{block.data.text}</Typography>
-//        <Typography variant="h6">{block.data.level}</Typography>
-//        {/* <Typography>{block.data.items}</Typography> */}
-//        {/* {block.data.items &&
-//               // block.data.items.map((item: any, index: number) => (
-//               //   <Box key={index}>
-//               //     {typeof item === "string" ? (
-//               //       <Typography>{item}</Typography>
-//               //     ) : (
-//               //       <>
-//               //         <Typography>{item.text}</Typography>
-//               //         <Typography>{item.checked}</Typography>
-//               //       </>
-//               //     )}
-//               //   </Box>
-//               // ))}
-//             //  <Typography>{block.data.title}</Typography>
-//             // <Typography>{block.data.message}</Typography>
-//             // <Typography>{block.data.alignment}</Typography>
-//             // <Typography>{block.data.caption}</Typography>
-//             // <Typography>{block.data.html}</Typography>
-//             */}
-//      </Box>
-//    ))}
-//  </Box>;
 
 export default NotePage;

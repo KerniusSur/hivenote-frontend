@@ -1,5 +1,7 @@
 import { ThemeProvider } from "@emotion/react";
+import { CssBaseline } from "@mui/material";
 import PublicLayout from "layouts/PublicLayout";
+import CalendarPage from "pages/CalendarPage";
 import HomePage from "pages/HomePage";
 import NotePage from "pages/NotePage";
 import RegisterLoginPage from "pages/RegisterLoginPage";
@@ -10,8 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import RequireAuth from "utils/RequireAuth";
 import AppTheme from "./AppTheme";
 import "./index.css";
-
-import CalendarPage from "pages/CalendarPage";
+import { ThemeContextProvider } from "utils/theme/ThemeContextProvider";
 
 const root = createRoot(document.querySelector("#root")!);
 root.render(
@@ -34,7 +35,7 @@ root.render(
 
 function App() {
   return (
-    <ThemeProvider theme={AppTheme}>
+    <ThemeContextProvider>
       <BrowserRouter>
         <Routes>
           {layouts?.map((layout: PathGroup, i: number) => (
@@ -54,7 +55,7 @@ function App() {
           ))}
         </Routes>
       </BrowserRouter>
-    </ThemeProvider>
+    </ThemeContextProvider>
   );
 }
 
