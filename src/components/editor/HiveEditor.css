@@ -4,6 +4,7 @@
   padding: 20px 30px;
   width: 60%;
   margin: 50px auto;
+  max-width: 1400px;
 }
 
 body {
@@ -11,7 +12,7 @@ body {
 }
 
 #editorjs-container {
-  background-color: #f9f9f9;
+  background: #fff;
   padding: 20px 30px;
   margin-bottom: 20px;
 }
@@ -22,6 +23,10 @@ body {
   width: 92% !important;
 }
 
+.ce-block__content > * {
+  color: #000000;
+}
+
 .editorjs-codeFlask_Wrapper .editorjs-codeFlask_LangDisplay {
   max-width: unset;
   height: unset !important;
@@ -30,7 +35,7 @@ body {
 .editor button {
   border: none;
   padding: 10px 20px;
-  background: #2cd3ff;
+  background: #68548e;
   color: white;
   font-weight: bold;
   cursor: pointer;

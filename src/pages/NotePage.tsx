@@ -1,6 +1,7 @@
-import { Box, Input } from "@mui/material";
+import { Box, Input, useTheme } from "@mui/material";
 import AppTheme from "AppTheme";
-import HiveEditor from "components/HiveEditor";
+import HiveEditor from "components/editor/HiveEditor";
+import "components/editor/HiveEditor.css";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
 import EditorBlock from "models/editor/EditorBlock";
 import EditorData from "models/editor/EditorData";
@@ -13,7 +14,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import useSocketStore from "utils/stores/SocketStore";
-import "../components/HiveEditor.css";
+import "@fontsource/roboto";
+import "@fontsource/roboto/700.css";
 import "./Editor.css";
 
 export interface NoteDataItem {
@@ -24,6 +26,7 @@ export interface NoteDataItem {
 const NotePage = () => {
   const { noteId } = useParams();
   const { socket, receivedMessages } = useSocketStore();
+  const theme = useTheme();
 
   const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -67,10 +70,6 @@ const NotePage = () => {
     fetchNote();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteId, socket?.connected]);
-
-  useEffect(() => {
-    console.log("Received messages: ", receivedMessages);
-  }, [receivedMessages]);
 
   const handleNoteTitleChange = async (title?: string, coverUrl?: string) => {
     if (!noteId || !editorData?.blocks) {
@@ -119,9 +118,9 @@ const NotePage = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "24px",
-        padding: "48px",
+        gap: "1.5rem",
         width: "100%",
+        height: "100%",
         boxSizing: "border-box",
       }}
     >
@@ -130,17 +129,25 @@ const NotePage = () => {
         placeholder="Untitled"
         value={noteMessage?.title}
         sx={{
+          fontFamily: "Roboto",
+          fontSize: "36px",
+          fontWeight: 700,
+          lineHeight: "44px",
           border: "none",
+          alignSelf: "center",
           ":before": {
             borderBottom: "none !important",
           },
           ":after": {
             borderBottom: "none !important",
           },
-          fontFamily: "Roboto, sans-serif",
-          fontSize: "40px",
-          lineHeight: "120%",
-          fontWeight: 600,
+          paddingLeft: "1rem",
+          marginBottom: "-1.5rem",
+          paddingBottom: "1rem",
+          paddingTop: "0.5rem",
+          borderRadius: "12px 12px 0px 0px",
+          width: "100%",
+          maxWidth: "1400px",
         }}
         onChange={(e) => {
           handleNoteTitleChange(e.target.value, noteMessage?.coverUrl);
@@ -152,12 +159,14 @@ const NotePage = () => {
           width: "100%",
           justifyContent: "center",
           boxSizing: "border-box",
+          height: "100%",
         }}
       >
         <Box
           className="editor"
           style={{
             width: "100%",
+            height: "100%",
             backgroundColor: AppTheme.palette.background.paper,
           }}
         >

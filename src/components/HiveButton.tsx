@@ -1,23 +1,22 @@
 import { Button, ButtonProps, Typography } from "@mui/material";
-import AppTheme from "AppTheme";
 
 interface HiveButtonProps extends ButtonProps {
   text: string;
+  compact: boolean;
   startIcon?: JSX.Element;
   endIcon?: JSX.Element;
-  compact?: boolean;
 }
 
 const HiveButton = (props: HiveButtonProps) => {
-  const { text, startIcon, endIcon, ...other } = props;
+  const { text, startIcon, compact, endIcon, ...other } = props;
   return (
     <Button
-      fullWidth={!props.compact}
+      fullWidth={!compact}
       sx={{
         display: "flex",
         alignItems: "center",
         gap: "12px",
-        padding: props.compact
+        padding: compact
           ? props.variant === "outlined"
             ? "7px 19px"
             : "8px 20px"
@@ -30,6 +29,10 @@ const HiveButton = (props: HiveButtonProps) => {
       {props.endIcon}
     </Button>
   );
+};
+
+HiveButton.defaultProps = {
+  compact: false,
 };
 
 export default HiveButton;

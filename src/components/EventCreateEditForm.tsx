@@ -10,6 +10,7 @@ import HiveTimePicker from "components/HiveTimePicker";
 import dayjs from "dayjs";
 import { Form, Formik, FormikHelpers } from "formik";
 import CalendarEvent from "models/calendar/CalendarEvent";
+import moment from "moment";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { createApi } from "utils/api/ApiCreator";
@@ -27,8 +28,7 @@ interface EventCreateEditFormProps {
 }
 
 const EventCreateEditForm = (props: EventCreateEditFormProps) => {
-  const { event, isEdit, handleSubmit, handleCancel } = props;
-  const isMobile = useMediaQuery("(max-width: 600px)");
+  const { event, newEvent, isEdit, handleSubmit, handleCancel } = props;
   const eventAPI = useRef(createApi("event") as Events);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
@@ -61,7 +61,12 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
     <FormOuterContainer>
       <Formik
         enableReinitialize
-        initialValues={getInitialValues(event)}
+        validateOnMount
+        initialValues={
+          newEvent
+            ? getInitialValuesFromCalendarEvent(newEvent)
+            : getInitialValues(event)
+        }
         validationSchema={getValidationSchema()}
         onSubmit={onSubmit}
       >
@@ -232,9 +237,26 @@ const getInitialValues = (event?: EventResponse): EventFormValues => {
     title: event.title,
     description: event.description,
     location: event.location,
-    date: new Date(event.eventStart),
-    eventStart: new Date(event.eventStart),
-    eventEnd: new Date(event.eventEnd),
+    date: moment(event.eventStart).toDate(),
+    eventStart: moment(event.eventStart).toDate(),
+    eventEnd: moment(event.eventEnd).toDate(),
+  };
+};
+
+const getInitialValuesFromCalendarEvent = (
+  newEvent?: CalendarEvent
+): EventFormValues => {
+  if (!newEvent) {
+    return initialValues;
+  }
+
+  return {
+    title: newEvent.title,
+    description: "",
+    location: "",
+    date: moment(newEvent.start).toDate(),
+    eventStart: moment(newEvent.start).toDate(),
+    eventEnd: moment(newEvent.end).toDate(),
   };
 };
 
@@ -276,7 +298,6 @@ export const StaticMobileButtonFooter = (
         position: isMobile ? "fixed" : "none",
         bottom: isMobile ? "0" : "none",
         right: "0",
-        // backgroundColor: "#FFFFFF",
         gap: isMobile ? "1rem" : "1.5rem",
       }}
     >

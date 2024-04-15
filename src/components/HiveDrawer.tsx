@@ -20,13 +20,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { NoteResponse } from "api/data-contracts";
-import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import HiveNoteTextLogoWhite from "assets/hivenote-text-logo-white.svg";
+import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import { DrawerHeader } from "layouts/PublicLayout";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useNoteStore from "utils/stores/NoteStore";
 import { hexToRgba } from "utils/ObjectUtils";
+import useNoteStore from "utils/stores/NoteStore";
 
 interface HiveDrawerProps {
   isDrawerOpen: boolean;
@@ -134,18 +134,18 @@ interface DrawerContentProps {
   handleCreateNote: (parentId?: string) => void;
   handleSelectNote: (noteId: string) => void;
   handleDeleteNote: (noteId: string) => void;
-  activeNoteId?: string;
+  activeNoteId: string | undefined;
 }
 
 const DrawerContent = (props: DrawerContentProps) => {
   const {
     ownerNotes,
     sharedNotes,
+    activeNoteId,
     handleSelectNote,
     handleCreateNote,
     handleDeleteNote,
   } = props;
-  const { activeNoteId } = useNoteStore();
   const navigate = useNavigate();
 
   const [menuState, setMenuState] = useState<{
@@ -485,9 +485,8 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
       }}
     >
       {notes.map((note) => (
-        <>
+        <div key={note.id}>
           <ListNoteItem
-            key={note.id}
             noteId={note.id}
             activeNoteId={activeNoteId}
             sx={{
@@ -562,7 +561,7 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
               />
             )}
           </Box>
-        </>
+        </div>
       ))}
     </Box>
   );

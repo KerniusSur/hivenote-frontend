@@ -2,7 +2,7 @@ import "@fontsource/roboto";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import { createTheme } from "@mui/material";
-import colors, { elevationLight } from "utils/theme/colors";
+import { elevationLight } from "utils/theme/colors";
 
 const AppTheme = createTheme({
   // --------------------------- Components --------------------------------- //
