@@ -36,8 +36,8 @@
 
 .rbc-current-time-indicator {
   background:
-    url("../../../_assets/current-time-indicator.svg") no-repeat left center,
-    url("../../../_assets/solid-black-line.svg") repeat right center;
+    url("../../assets/current-time-indicator.svg") no-repeat left center,
+    url("../../assets/solid-black-line.svg") repeat right center;
   height: 8px;
   background-color: transparent;
   border: none;
