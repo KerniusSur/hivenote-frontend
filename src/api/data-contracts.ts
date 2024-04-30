@@ -70,7 +70,7 @@ export interface ComponentResponse {
     | "link"
     | "linkTool";
   /** @format int32 */
-  order?: number;
+  priority?: number;
   properties?: ComponentProperties;
   parent?: ComponentResponse;
 }
@@ -86,6 +86,13 @@ export interface NoteResponse {
   collaborators: AccountPublicResponse[];
   comments?: CommentResponse[];
   children?: NoteResponse[];
+}
+
+export interface NoteShareRequest {
+  /** @format uuid */
+  noteId: string;
+  accessType: string;
+  emails?: string[];
 }
 
 export interface EventUpdateRequest {
@@ -167,6 +174,15 @@ export interface EmailPasswordLoginRequest {
   email: string;
   password: string;
   ipAddress?: string;
+}
+
+export interface NoteAccessResponse {
+  /** @format uuid */
+  noteId?: string;
+  /** @format uuid */
+  accountId?: string;
+  accessType?: "OWNER" | "EDITOR" | "VIEWER";
+  accountEmail?: string;
 }
 
 export interface MeResponse {

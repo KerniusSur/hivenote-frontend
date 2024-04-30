@@ -3,10 +3,10 @@ import HivePublicNavbar from "components/HiveNavbar";
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-const drawerWidth = 240;
+const drawerWidth = 320;
 
 const PublicLayout = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(true);
 
   return (
     <OutsideContainer>

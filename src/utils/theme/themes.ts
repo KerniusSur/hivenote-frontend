@@ -25,12 +25,15 @@ export const getDesignTokens = (mode: PaletteMode): DesignTokens => ({
             contrastText: colors.onError.light,
           },
           background: {
-            default: colors.background.light,
+            default: surfaceLight.surfaceContainerLow,
             paper: colors.surface.light,
           },
           text: {
             primary: colors.onSurface.light,
             secondary: colors.onSecondaryContainer.light,
+          },
+          action: {
+            hover: colors.secondaryContainer.light,
           },
         }
       : {
@@ -47,12 +50,15 @@ export const getDesignTokens = (mode: PaletteMode): DesignTokens => ({
             contrastText: colors.onError.dark,
           },
           background: {
-            default: colors.background.dark,
+            default: surfaceDark.surfaceContainerLow,
             paper: colors.surface.dark,
           },
           text: {
             primary: colors.onSurface.dark,
             secondary: colors.onSecondaryContainer.dark,
+          },
+          action: {
+            hover: colors.secondaryContainer.dark,
           },
         }),
   },

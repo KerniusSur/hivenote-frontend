@@ -17,6 +17,9 @@ import useSocketStore from "utils/stores/SocketStore";
 import "@fontsource/roboto";
 import "@fontsource/roboto/700.css";
 import "./Editor.css";
+import HiveNoteShareDialog from "components/HiveNoteShareDialog";
+import { createApi } from "utils/api/ApiCreator";
+import { Notes } from "api/Notes";
 
 export interface NoteDataItem {
   text?: string;
@@ -27,11 +30,13 @@ const NotePage = () => {
   const { noteId } = useParams();
   const { socket, receivedMessages } = useSocketStore();
   const theme = useTheme();
+  const noteAPI = createApi("note") as Notes;
 
   const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<EditorData | undefined>();
   const [testJsonOutput, setTestJsonOutput] = useState<string>("");
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState<boolean>(false);
 
   socket.on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
     setNoteMessage(message);
@@ -68,10 +73,9 @@ const NotePage = () => {
 
   useEffect(() => {
     fetchNote();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteId, socket?.connected]);
 
-  const handleNoteTitleChange = async (title?: string, coverUrl?: string) => {
+  const handleNoteTitleChange = async (title: string, coverUrl?: string) => {
     if (!noteId || !editorData?.blocks) {
       toast.error("NoteId not found");
       return;
@@ -79,7 +83,7 @@ const NotePage = () => {
 
     const message: NoteMessage = {
       id: noteId,
-      title: title ? title : "Untitled",
+      title: title,
       coverUrl: coverUrl,
       components: getComponentListFromBlocks(editorData.blocks),
       type: MessageType.CLIENT,
@@ -112,6 +116,16 @@ const NotePage = () => {
 
     setNoteMessage(message);
   };
+
+  const handleOpenShareDialog = () => {
+    setIsShareDialogOpen(true);
+  };
+
+  const handleCloseShareDialog = () => {
+    setIsShareDialogOpen(false);
+  };
+
+  const handleShareNote = async () => {};
 
   return (
     <Box
@@ -180,6 +194,11 @@ const NotePage = () => {
             <HiveLoadingSpinner size="large" />
           )}
         </Box>
+        <HiveNoteShareDialog
+          open={isShareDialogOpen}
+          handleClose={handleCloseShareDialog}
+          handleSubmit={handleShareNote}
+        />
       </Box>
       {/* <Box>
         <Typography variant="h6">{testJsonOutput}</Typography>

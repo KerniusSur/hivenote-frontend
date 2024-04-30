@@ -86,6 +86,7 @@ const AppTheme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: "none",
+          transition: "background-color 1s ease",
         },
       },
     },

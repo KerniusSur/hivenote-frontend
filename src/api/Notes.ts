@@ -10,8 +10,10 @@
  */
 
 import {
+  NoteAccessResponse,
   NoteCreateRequest,
   NoteResponse,
+  NoteShareRequest,
   NoteUpdateRequest,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
@@ -45,6 +47,21 @@ export class Notes<
     this.request<NoteResponse, any>({
       path: `/api/v1/user/notes`,
       method: "POST",
+      body: data,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags note-access-controller
+   * @name ShareNote
+   * @request PUT:/api/v1/user/notes/access/share
+   */
+  shareNote = (data: NoteShareRequest, params: RequestParams = {}) =>
+    this.request<void, any>({
+      path: `/api/v1/user/notes/access/share`,
+      method: "PUT",
       body: data,
       type: ContentType.Json,
       ...params,
@@ -110,7 +127,7 @@ export class Notes<
    */
   findAllFilteredBy = (
     query?: {
-      accessType?: "FIELD" | "PROPERTY";
+      accessType?: "OWNER" | "EDITOR" | "VIEWER";
       searchString?: string;
       isArchived?: boolean;
       isDeleted?: boolean;
@@ -121,6 +138,32 @@ export class Notes<
       path: `/api/v1/user/notes/filter`,
       method: "GET",
       query: query,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags note-access-controller
+   * @name FindNoteCollaborators
+   * @request GET:/api/v1/user/notes/access/{id}
+   */
+  findNoteCollaborators = (id: string, params: RequestParams = {}) =>
+    this.request<NoteAccessResponse[], any>({
+      path: `/api/v1/user/notes/access/${id}`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags note-access-controller
+   * @name HasAccess
+   * @request GET:/api/v1/user/notes/access/{id}/access/{accessType}
+   */
+  hasAccess = (id: string, accessType: string, params: RequestParams = {}) =>
+    this.request<boolean, any>({
+      path: `/api/v1/user/notes/access/${id}/access/${accessType}`,
+      method: "GET",
       ...params,
     });
 }

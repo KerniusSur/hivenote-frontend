@@ -1,4 +1,4 @@
-import { MenuOutlined } from "@mui/icons-material";
+import { MenuOutlined, SearchRounded } from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -17,6 +17,8 @@ import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import HiveButton from "components/HiveButton";
 import HiveDrawer from "components/HiveDrawer";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
+import { HiveSearchValues } from "components/search/HiveSearch";
+import HiveSearch from "components/search/HiveSearchDialog";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -47,6 +49,8 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
 
   const [ownerNotes, setOwnerNotes] = useState<NoteResponse[]>([]);
   const [sharedNotes, setSharedNotes] = useState<NoteResponse[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [resultItems, setResultItems] = useState<NoteResponse[]>([]);
 
   useEffect(() => {
     if (isStateReady && account) {
@@ -67,6 +71,14 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const handleSearchOpen = () => {
+    setIsSearchOpen(true);
+  };
+
+  const handleSearchClose = () => {
+    setIsSearchOpen(false);
   };
 
   const logout = async () => {
@@ -111,6 +123,15 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
     }
     toast.success("Note deleted successfully");
     getAllUserNotes();
+  };
+
+  const handleSearch = async (values: HiveSearchValues) => {
+    const params = {
+      searchString: values.searchString,
+    };
+
+    const response = await noteAPI.current.findAllFilteredBy(params);
+    setResultItems(response);
   };
 
   return (
@@ -193,6 +214,7 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                   <MenuOutlined
                     sx={{
                       color: theme.palette.primary.main,
+                      display: isDrawerOpen ? "none" : "block",
                     }}
                   />
                 </IconButton>
@@ -251,6 +273,18 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
                       gap: "16px",
                     }}
                   >
+                    <IconButton
+                      sx={{
+                        display: "flex",
+                      }}
+                      onClick={handleSearchOpen}
+                    >
+                      <SearchRounded
+                        sx={{
+                          color: theme.palette.primary.main,
+                        }}
+                      />
+                    </IconButton>
                     <ThemeSwitch />
                     <HiveButton
                       text="Logout"
@@ -271,6 +305,12 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
           marginLeft: "-160px",
           borderColor: "#0E0E0E",
         }}
+      />
+      <HiveSearch
+        open={isSearchOpen}
+        resultItems={resultItems}
+        handleSearch={handleSearch}
+        handleClose={handleSearchClose}
       />
     </Box>
   );
