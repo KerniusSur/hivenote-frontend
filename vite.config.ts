@@ -13,6 +13,7 @@ export default defineConfig({
     },
     port: 4000,
   },
+  base: ".",
   resolve: {
     alias: {
       src: path.resolve(__dirname, "./src"),
@@ -32,7 +33,6 @@ export default defineConfig({
   build: {
     outDir: "dist",
   },
-  base: "./",
   plugins: [react()],
   logLevel: "info",
 });
