@@ -19,7 +19,6 @@ const HiveSearchDialog = (props: HiveSearchProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [t, setT] = useState<NodeJS.Timeout | undefined>(undefined);
-  const [searchString, setSearchString] = useState<string>("");
 
   const handleSubmit = (values: HiveSearchValues) => {
     console.log("submitting form");
@@ -39,7 +38,6 @@ const HiveSearchDialog = (props: HiveSearchProps) => {
           backgroundColor: theme.palette.background.paper,
           width: "80%",
           maxWidth: "none",
-          // padding: "1rem",
           boxSizing: "border-box",
           borderRadius: "1rem",
         },
@@ -56,7 +54,6 @@ const HiveSearchDialog = (props: HiveSearchProps) => {
           setT(
             setTimeout(() => {
               handleSubmit({ searchString: e.target.value });
-              setSearchString(e.target.value);
             }, 500)
           );
         }}
@@ -81,7 +78,7 @@ const HiveSearchDialog = (props: HiveSearchProps) => {
                 }}
                 key={index}
                 title={item.title || "No title"}
-                description={getDescription(item, searchString)}
+                description={getDescription(item)}
                 handleClick={() => {
                   navigate(`/note/${item.id}`);
                   handleClose();
@@ -114,11 +111,7 @@ const isNoteResponseArray = (items: any[]): items is NoteResponse[] => {
   return items.every((item) => isNoteResponse(item));
 };
 
-const getDescription = (note: NoteResponse, searchString: string): string => {
-  if (note.title?.includes(searchString)) {
-    return "";
-  }
-
+const getDescription = (note: NoteResponse): string => {
   const first50Chars = note.components?.reduce((acc, component) => {
     if (acc.length < 50) {
       return (
