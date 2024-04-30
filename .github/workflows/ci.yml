@@ -14,6 +14,11 @@ env:
   REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
   REMOTE_PRIVATE_KEY: ${{ secrets.REMOTE_PRIVATE_KEY }}
   REMOTE_PASSPHRASE: ${{ secrets.REMOTE_PASSPHRASE }}
+  VU_REMOTE_HOST: ${{ secrets.VU_REMOTE_HOST }}
+  VU_REMOTE_USERNAME: ${{ secrets.VU_REMOTE_USERNAME }}
+  VU_REMOTE_PORT: ${{ secrets.VU_REMOTE_PORT }}
+  VU_REMOTE_PRIVATE_KEY: ${{ secrets.VU_REMOTE_PRIVATE_KEY }}
+  VU_REMOTE_PASSPHRASE: ${{ secrets.VU_REMOTE_PASSPHRASE }}
 
 on:
   push:
@@ -73,5 +78,16 @@ jobs:
           port: ${{env.REMOTE_PORT}}
           key: ${{env.REMOTE_PRIVATE_KEY}}
           passphrase: ${{env.REMOTE_PASSPHRASE}}
+          script: |
+            sh start.sh
+
+      - name: Restart apps in VU remote
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{env.VU_REMOTE_HOST}}
+          username: ${{env.VU_REMOTE_USERNAME}}
+          port: ${{env.VU_REMOTE_PORT}}
+          key: ${{env.VU_REMOTE_PRIVATE_KEY}}
+          passphrase: ${{env.VU_REMOTE_PASSPHRASE}}
           script: |
             sh start.sh
