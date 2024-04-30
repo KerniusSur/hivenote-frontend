@@ -4,6 +4,7 @@ import "@fontsource/roboto/500.css";
 import { createTheme } from "@mui/material";
 import { elevationLight } from "utils/theme/colors";
 
+
 const AppTheme = createTheme({
   // --------------------------- Components --------------------------------- //
   components: {
@@ -86,6 +87,7 @@ const AppTheme = createTheme({
       styleOverrides: {
         root: {
           boxShadow: "none",
+          transition: "background-color 1s ease",
         },
       },
     },
