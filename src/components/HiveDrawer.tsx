@@ -20,11 +20,14 @@ import {
   useTheme,
 } from "@mui/material";
 import { NoteResponse } from "api/data-contracts";
+import { Notes } from "api/Notes";
 import HiveNoteTextLogoWhite from "assets/hivenote-text-logo-white.svg";
 import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
+import { HiveSearchValues } from "components/search/HiveSearch";
 import { DrawerHeader } from "layouts/PublicLayout";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createApi } from "utils/api/ApiCreator";
 import { hexToRgba } from "utils/ObjectUtils";
 import useNoteStore from "utils/stores/NoteStore";
 
@@ -102,7 +105,7 @@ const HiveDrawer = (props: HiveDrawerProps) => {
               navigate("/");
             }}
           />
-          <IconButton onClick={toggleDrawer}>
+          <IconButton onClick={toggleDrawer} color="primary">
             <CloseRounded />
           </IconButton>
         </DrawerHeader>
@@ -134,7 +137,7 @@ interface DrawerContentProps {
   handleCreateNote: (parentId?: string) => void;
   handleSelectNote: (noteId: string) => void;
   handleDeleteNote: (noteId: string) => void;
-  activeNoteId: string | undefined;
+  activeNoteId?: string | undefined;
 }
 
 const DrawerContent = (props: DrawerContentProps) => {
@@ -147,6 +150,12 @@ const DrawerContent = (props: DrawerContentProps) => {
     handleDeleteNote,
   } = props;
   const navigate = useNavigate();
+
+  const noteAPI = createApi("note") as Notes;
+
+  const handleSearch = (values: HiveSearchValues) => {
+    console.log(values);
+  };
 
   const [menuState, setMenuState] = useState<{
     open: boolean;
@@ -433,23 +442,27 @@ export const NoteOptions = ({
   );
 };
 
-export const ListNoteItem = styled(ListItem)(
-  ({ theme }) =>
-    ({ noteId, activeNoteId }: { noteId: string; activeNoteId?: string }) => {
-      return {
-        boxSizing: "border-box",
-        padding: "0px",
-        paddingRight: "8px",
-        "&:hover": {
-          cursor: "pointer",
-        },
-        backgroundColor:
-          noteId && activeNoteId && noteId === activeNoteId
-            ? `${hexToRgba(theme.palette.primary.main, 0.2)}`
-            : "transparent",
-      };
-    }
-);
+export interface ListNoteItemProps {
+  noteId: string;
+  activeNoteId?: string;
+}
+
+export const ListNoteItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== "noteId" && prop !== "activeNoteId",
+})<ListNoteItemProps>(({ theme, noteId, activeNoteId }) => {
+  return {
+    boxSizing: "border-box",
+    padding: "0px",
+    paddingRight: "8px",
+    "&:hover": {
+      cursor: "pointer",
+    },
+    backgroundColor:
+      noteId && activeNoteId && noteId === activeNoteId
+        ? `${hexToRgba(theme.palette.primary.main, 0.2)}`
+        : "transparent",
+  };
+});
 
 interface RecursiveNoteListProps {
   depth?: number;
