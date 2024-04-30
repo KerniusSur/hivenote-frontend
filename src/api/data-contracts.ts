@@ -61,7 +61,14 @@ export interface ComponentProperties {
 export interface ComponentResponse {
   /** @format uuid */
   id?: string;
-  type?: "header" | "paragraph" | "list" | "checklist" | "image" | "link" | "linkTool";
+  type?:
+    | "header"
+    | "paragraph"
+    | "list"
+    | "checklist"
+    | "image"
+    | "link"
+    | "linkTool";
   /** @format int32 */
   priority?: number;
   properties?: ComponentProperties;

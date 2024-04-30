@@ -4,7 +4,6 @@ import "@fontsource/roboto/500.css";
 import { createTheme } from "@mui/material";
 import { elevationLight } from "utils/theme/colors";
 
-
 const AppTheme = createTheme({
   // --------------------------- Components --------------------------------- //
   components: {

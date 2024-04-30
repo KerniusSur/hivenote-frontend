@@ -1,4 +1,3 @@
-
 // add cancel method to debounce function
 const debounce = (fn: Function, ms = 300) => {
   let timeoutId: ReturnType<typeof setTimeout>;
@@ -7,6 +6,5 @@ const debounce = (fn: Function, ms = 300) => {
     timeoutId = setTimeout(() => fn.apply(this, args), ms);
   };
 };
-
 
 export default debounce;

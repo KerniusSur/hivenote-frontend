@@ -27,9 +27,7 @@ const HiveSearchItem = (props: HiveSearchItemProps) => {
       }}
       onClick={handleClick}
     >
-      <Typography variant="label1">
-        {title}
-      </Typography>
+      <Typography variant="label1">{title}</Typography>
       <Typography variant="label2">{description}</Typography>
     </Box>
   );
