@@ -24,8 +24,5 @@ ENV NODE_ENV ${NODE_ENV}
 COPY --from=build /usr/local/app/dist /usr/share/nginx/html
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Increase server_names_hash_bucket_size
-COPY nginx/server_hash.conf /etc/nginx/conf.d/
-
 # Expose port 80
 EXPOSE 80
