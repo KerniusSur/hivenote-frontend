@@ -122,19 +122,21 @@ const getDescription = (note: NoteResponse, searchString: string): string => {
   const first50Chars = note.components?.reduce((acc, component) => {
     if (acc.length < 50) {
       return (
-        acc + component.properties?.text ??
-        component.properties?.title ??
-        component.properties?.message ??
-        component.properties?.caption ??
-        component.properties?.html ??
+        acc + " " + component.properties?.text ||
+        component.properties?.title ||
+        component.properties?.message ||
+        component.properties?.caption ||
+        component.properties?.html ||
         ""
       );
     }
     return acc;
   }, "");
 
-  console.log(first50Chars);
+  if (!first50Chars || first50Chars.length < 50) {
+    return first50Chars || "";
+  }
 
-  return first50Chars ?? "";
+  return first50Chars + "...";
 };
 export default HiveSearchDialog;

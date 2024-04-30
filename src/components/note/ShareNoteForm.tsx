@@ -1,5 +1,5 @@
-import NoteAccessType from "models/note/NoteAccessType";
 import { Formik } from "formik";
+import NoteAccessType from "models/note/NoteAccessType";
 import * as yup from "yup";
 
 interface ShareNoteFormProps {
@@ -9,7 +9,6 @@ interface ShareNoteFormProps {
 
 const ShareNoteForm = (props: ShareNoteFormProps) => {
   const { noteId, handleSubmit } = props;
-  const 
 
   return (
     <Formik
@@ -17,11 +16,11 @@ const ShareNoteForm = (props: ShareNoteFormProps) => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
       enableReinitialize
-    >
-
-    </Formik>
+    ></Formik>
   );
 };
+
+export default ShareNoteForm;
 
 export interface ShareNoteFormValues {
   email: string;
