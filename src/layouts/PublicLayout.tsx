@@ -6,7 +6,7 @@ import { Outlet } from "react-router-dom";
 const drawerWidth = 320;
 
 const PublicLayout = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   return (
     <OutsideContainer>

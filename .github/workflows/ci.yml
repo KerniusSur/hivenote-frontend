@@ -81,13 +81,20 @@ jobs:
           script: |
             sh start.sh
 
-      - name: Restart apps in VU remote
+
+      - name: publish to VU resources
+        run: |
+          sh publish-opennebula.sh
+
+      - name: Restart apps in remote
         uses: appleboy/ssh-action@master
         with:
           host: ${{env.VU_REMOTE_HOST}}
           username: ${{env.VU_REMOTE_USERNAME}}
           port: ${{env.VU_REMOTE_PORT}}
           key: ${{env.VU_REMOTE_PRIVATE_KEY}}
-          passphrase: ${{env.VU_REMOTE_PASSPHRASE}}
+          passphrase: ${{env.VU_REMOTE_PRIVATE_KEY}}
           script: |
             sh start.sh
+
+    
