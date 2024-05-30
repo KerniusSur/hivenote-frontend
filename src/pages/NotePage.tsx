@@ -233,6 +233,9 @@ const getBlockListFromComponents = (
         caption: component.properties.caption,
         html: component.properties.html,
         link: component.properties.link,
+        file: {
+          url: component.properties.url || "",
+        },
       },
     };
 
@@ -277,6 +280,7 @@ const getComponentListFromBlocks = (
         caption: block.data.caption,
         html: block.data.html,
         link: block.data.link,
+        url: block.data.file?.url,
       },
     };
 

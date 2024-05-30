@@ -4,7 +4,7 @@ import List from "@editorjs/list";
 import Warning from "@editorjs/warning";
 import Code from "@editorjs/code";
 import LinkTool from "@editorjs/link";
-import Image from "@editorjs/image";
+import ImageTool from "@editorjs/image";
 import Raw from "@editorjs/raw";
 import Header from "@editorjs/header";
 import Quote from "@editorjs/quote";
@@ -13,6 +13,8 @@ import CheckList from "@editorjs/checklist";
 import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import SimpleImage from "@editorjs/simple-image";
+import { Upload } from "../api/Upload";
+import { getBaseUrl } from "utils";
 
 export const EDITOR_JS_TOOLS = {
   embed: Embed,
@@ -22,7 +24,26 @@ export const EDITOR_JS_TOOLS = {
   warning: Warning,
   code: Code,
   linkTool: LinkTool,
-  image: Image,
+  image: {
+    class: ImageTool,
+    config: {
+      uploader: {
+        uploadByFile: async (file) => {
+          const formData = new FormData();
+          console.log(file);
+          formData.append("file", file);
+
+          console.log("uploading file");
+          const uploadAPI = new Upload({ baseURL: getBaseUrl() });
+          const response = await uploadAPI.uploadFile({
+            file: file,
+          });
+          console.log(response);
+          return response;
+        },
+      },
+    },
+  },
   raw: Raw,
   header: Header,
   quote: Quote,

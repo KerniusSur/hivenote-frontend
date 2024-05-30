@@ -13,7 +13,12 @@ interface EditorBlock {
     caption?: string;
     html?: string;
     link?: string;
+    file?: FileData;
   };
+}
+
+export interface FileData {
+  url: string;
 }
 
 export interface EditorBlockDataItemType {

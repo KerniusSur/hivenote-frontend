@@ -54,6 +54,7 @@ export interface ComponentProperties {
   caption?: string;
   html?: string;
   link?: string;
+  url?: string;
   itemsList?: ComponentItems[];
   itemsString?: string[];
 }
@@ -68,7 +69,8 @@ export interface ComponentResponse {
     | "checklist"
     | "image"
     | "link"
-    | "linkTool";
+    | "linkTool"
+    | "raw";
   /** @format int32 */
   priority?: number;
   properties?: ComponentProperties;
@@ -174,6 +176,16 @@ export interface EmailPasswordLoginRequest {
   email: string;
   password: string;
   ipAddress?: string;
+}
+
+export interface FileUploadResponse {
+  /** @format int32 */
+  success?: number;
+  file?: FileUrlResponse;
+}
+
+export interface FileUrlResponse {
+  url?: string;
 }
 
 export interface NoteAccessResponse {
