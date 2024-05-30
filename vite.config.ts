@@ -13,7 +13,7 @@ export default defineConfig({
     },
     port: 4000,
   },
-  base: ".",
+  base: "./",
   resolve: {
     alias: {
       src: path.resolve(__dirname, "./src"),
