@@ -18,7 +18,7 @@ import "@fontsource/roboto";
 import "@fontsource/roboto/700.css";
 import "./Editor.css";
 import HiveNoteShareDialog from "components/HiveNoteShareDialog";
-import { createApi } from "utils/api/ApiCreator";
+import { createApi } from "utils/api/ApiCreator"; 
 import { Notes } from "api/Notes";
 
 export interface NoteDataItem {
@@ -233,6 +233,9 @@ const getBlockListFromComponents = (
         caption: component.properties.caption,
         html: component.properties.html,
         link: component.properties.link,
+        file: {
+          url: component.properties.url || "",
+        }
       },
     };
 
@@ -277,6 +280,7 @@ const getComponentListFromBlocks = (
         caption: block.data.caption,
         html: block.data.html,
         link: block.data.link,
+        url: block.data.file?.url
       },
     };
 

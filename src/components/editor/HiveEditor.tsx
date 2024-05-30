@@ -26,6 +26,7 @@ const HiveEditor = (props: HiveEditorProps) => {
         data: data,
         async onChange(api, event) {
           const data = await api.saver.save();
+          console.log("DATA:", data);
           onChange(data);
         },
       });
