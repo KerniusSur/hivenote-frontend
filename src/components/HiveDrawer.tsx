@@ -6,6 +6,7 @@ import {
   KeyboardArrowDownRounded,
   KeyboardArrowRightRounded,
   MoreHorizRounded,
+  ShareOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -25,10 +26,12 @@ import HiveNoteTextLogoWhite from "assets/hivenote-text-logo-white.svg";
 import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
 import { HiveSearchValues } from "components/search/HiveSearch";
 import { DrawerHeader } from "layouts/PublicLayout";
+import NoteAccessType from "models/note/NoteAccessType";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createApi } from "utils/api/ApiCreator";
 import { hexToRgba } from "utils/ObjectUtils";
+import useAuthStore from "utils/stores/AuthStore";
 import useNoteStore from "utils/stores/NoteStore";
 
 interface HiveDrawerProps {
@@ -386,6 +389,7 @@ export const NoteOptions = ({
   handleCreateNote,
   handleMenuOpen,
   depth,
+  isEditor,
 }: {
   noteId?: string;
   handleCreateNote: (parentId?: string) => void;
@@ -394,8 +398,10 @@ export const NoteOptions = ({
     noteId?: string
   ) => void;
   depth?: number;
+  isEditor: boolean;
 }) => {
   const theme = useTheme();
+  // console.log("isEditor", isEditor);
   return (
     <Box
       sx={{
@@ -420,6 +426,24 @@ export const NoteOptions = ({
           }}
         />
       </IconButton>
+      {isEditor && (
+        <IconButton
+          sx={{
+            padding: "4px",
+          }}
+          onClick={(e) => {
+            handleMenuOpen(e, noteId);
+          }}
+        >
+          <ShareOutlined
+            sx={{
+              color: theme.palette.text.primary,
+              width: "16px",
+              height: "16px",
+            }}
+          />
+        </IconButton>
+      )}
       {(!depth || depth < 2) && (
         <IconButton
           sx={{
@@ -479,6 +503,7 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
   const { depth, notes, handleSelectNote, handleCreateNote, handleMenuOpen } =
     props;
   const { activeNoteId } = useNoteStore();
+  const account = useAuthStore((state) => state.account);
   const [showNested, setShowNested] = useState<Record<string, boolean>>({});
 
   const handleShowNested = (noteId: string) => {
@@ -555,6 +580,14 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
                 noteId={note.id}
                 handleCreateNote={handleCreateNote}
                 handleMenuOpen={(e) => handleMenuOpen(e, note.id)}
+                isEditor={
+                  note.collaborators?.length > 0 &&
+                  note.collaborators.filter(
+                    (c) =>
+                      c.accessType !== NoteAccessType.VIEWER &&
+                      c.account?.id === account?.id
+                  ).length > 0
+                }
               />
             </Box>
           </ListNoteItem>

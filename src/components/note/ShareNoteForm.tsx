@@ -1,5 +1,7 @@
-import { Formik } from "formik";
+import { FormContainer, FormOuterContainer } from "components/EventCreateEditForm";
+import { Form, Formik } from "formik";
 import NoteAccessType from "models/note/NoteAccessType";
+import { useState } from "react";
 import * as yup from "yup";
 
 interface ShareNoteFormProps {
@@ -9,14 +11,19 @@ interface ShareNoteFormProps {
 
 const ShareNoteForm = (props: ShareNoteFormProps) => {
   const { noteId, handleSubmit } = props;
-
+const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      enableReinitialize
-    ></Formik>
+    <FormOuterContainer>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        enableReinitialize
+      >
+        {(formik) => <FormContainer>
+          </FormContainer>}
+      </Formik>
+    </FormOuterContainer>
   );
 };
 

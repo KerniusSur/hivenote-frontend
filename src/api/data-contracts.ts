@@ -62,19 +62,18 @@ export interface ComponentProperties {
 export interface ComponentResponse {
   /** @format uuid */
   id?: string;
-  type?:
-    | "header"
-    | "paragraph"
-    | "list"
-    | "checklist"
-    | "image"
-    | "link"
-    | "linkTool"
-    | "raw";
+  type?: "header" | "paragraph" | "list" | "checklist" | "image" | "link" | "linkTool" | "raw";
   /** @format int32 */
   priority?: number;
   properties?: ComponentProperties;
   parent?: ComponentResponse;
+}
+
+export interface NoteAccessResponse {
+  /** @format uuid */
+  noteId: string;
+  account?: AccountPublicResponse;
+  accessType?: "OWNER" | "EDITOR" | "VIEWER";
 }
 
 export interface NoteResponse {
@@ -85,7 +84,7 @@ export interface NoteResponse {
   isArchived: boolean;
   isDeleted: boolean;
   components?: ComponentResponse[];
-  collaborators: AccountPublicResponse[];
+  collaborators: NoteAccessResponse[];
   comments?: CommentResponse[];
   children?: NoteResponse[];
 }
@@ -186,15 +185,6 @@ export interface FileUploadResponse {
 
 export interface FileUrlResponse {
   url?: string;
-}
-
-export interface NoteAccessResponse {
-  /** @format uuid */
-  noteId?: string;
-  /** @format uuid */
-  accountId?: string;
-  accessType?: "OWNER" | "EDITOR" | "VIEWER";
-  accountEmail?: string;
 }
 
 export interface MeResponse {

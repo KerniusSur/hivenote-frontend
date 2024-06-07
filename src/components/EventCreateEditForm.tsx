@@ -7,7 +7,6 @@ import HiveDatePicker from "components/HiveDatePicker";
 import HiveDeleteConfirmDialog from "components/HiveDeleteConfirmDialog";
 import HiveInput from "components/HiveInput";
 import HiveTimePicker from "components/HiveTimePicker";
-import dayjs from "dayjs";
 import { Form, Formik, FormikHelpers } from "formik";
 import CalendarEvent from "models/calendar/CalendarEvent";
 import moment from "moment";
@@ -176,7 +175,7 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
   );
 };
 
-const FormOuterContainer = styled(Box)(() => ({
+export const FormOuterContainer = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
   width: "100%",
@@ -188,7 +187,7 @@ const FormOuterContainer = styled(Box)(() => ({
   height: "100%",
 }));
 
-const FormContainer = styled(Box)(() => ({
+export const FormContainer = styled(Box)(() => ({
   display: "flex",
   flexDirection: "column",
   gap: "1rem",

@@ -18,9 +18,7 @@ import {
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Auth<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -28,10 +26,7 @@ export class Auth<
    * @name RegisterConfirmation
    * @request PUT:/api/v1/public/auth/register/confirm
    */
-  registerConfirmation = (
-    data: RegisterConfirmationRequest,
-    params: RequestParams = {}
-  ) =>
+  registerConfirmation = (data: RegisterConfirmationRequest, params: RequestParams = {}) =>
     this.request<void, any>({
       path: `/api/v1/public/auth/register/confirm`,
       method: "PUT",

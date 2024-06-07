@@ -1,8 +1,13 @@
+import "@fontsource/roboto";
+import "@fontsource/roboto/700.css";
 import { Box, Input, useTheme } from "@mui/material";
+import { NoteResponse } from "api/data-contracts";
+import { Notes } from "api/Notes";
 import AppTheme from "AppTheme";
 import HiveEditor from "components/editor/HiveEditor";
 import "components/editor/HiveEditor.css";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
+import HiveNoteShareDialog from "components/HiveNoteShareDialog";
 import EditorBlock from "models/editor/EditorBlock";
 import EditorData from "models/editor/EditorData";
 import NOTE from "models/events/NoteEvents";
@@ -10,16 +15,14 @@ import ComponentMessage from "models/message/ComponentMessage";
 import MessageType from "models/message/MessageType";
 import NoteMessage from "models/message/NoteMessage";
 import NoteRequestMessage from "models/message/NoteRequestMessage";
+import NoteAccessType from "models/note/NoteAccessType";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import useSocketStore from "utils/stores/SocketStore";
-import "@fontsource/roboto";
-import "@fontsource/roboto/700.css";
-import "./Editor.css";
-import HiveNoteShareDialog from "components/HiveNoteShareDialog";
 import { createApi } from "utils/api/ApiCreator";
-import { Notes } from "api/Notes";
+import useAuthStore from "utils/stores/AuthStore";
+import useSocketStore from "utils/stores/SocketStore";
+import "./Editor.css";
 
 export interface NoteDataItem {
   text?: string;
@@ -31,12 +34,17 @@ const NotePage = () => {
   const { socket, receivedMessages } = useSocketStore();
   const theme = useTheme();
   const noteAPI = createApi("note") as Notes;
+  const account = useAuthStore((state) => state.account);
 
   const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [editorData, setEditorData] = useState<EditorData | undefined>();
   const [testJsonOutput, setTestJsonOutput] = useState<string>("");
   const [isShareDialogOpen, setIsShareDialogOpen] = useState<boolean>(false);
+  const [note, setNote] = useState<NoteResponse | undefined>();
+  const [isEditor, setIsEditor] = useState<boolean | undefined>(undefined);
+
+  console.log("NotePage rerenedered");
 
   socket.on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
     setNoteMessage(message);
@@ -71,9 +79,24 @@ const NotePage = () => {
     setIsLoading(false);
   };
 
+  const getNoteResponse = async () => {
+    if (!noteId) {
+      return;
+    }
+    setIsLoading(true);
+
+    const response = await noteAPI.findById(noteId);
+    setNote(response);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     fetchNote();
   }, [noteId, socket?.connected]);
+
+  useEffect(() => {
+    getNoteResponse();
+  }, [noteId]);
 
   const handleNoteTitleChange = async (title: string, coverUrl?: string) => {
     if (!noteId || !editorData?.blocks) {
@@ -127,6 +150,26 @@ const NotePage = () => {
 
   const handleShareNote = async () => {};
 
+  useEffect(() => {
+    console.log("NotePage -> note", note);
+    console.log("NotePage -> account", account);
+
+    if (note && account) {
+      const isEditor =
+        note.collaborators.filter(
+          (c) =>
+            c.accessType !== NoteAccessType.VIEWER &&
+            c.account?.id === account?.id
+        ).length > 0;
+      setIsEditor(isEditor);
+      console.log("NotePage -> isEditor", isEditor);
+    }
+
+    return () => {
+      setIsEditor(undefined);
+    };
+  }, [note, account]);
+
   return (
     <Box
       sx={{
@@ -142,6 +185,7 @@ const NotePage = () => {
         id={"title-input-" + noteId}
         placeholder="Untitled"
         value={noteMessage?.title}
+        disabled={!isEditor}
         sx={{
           fontFamily: "Roboto",
           fontSize: "36px",
@@ -154,6 +198,10 @@ const NotePage = () => {
           },
           ":after": {
             borderBottom: "none !important",
+          },
+          "& .Mui-disabled": {
+            color: theme.palette.text.primary,
+            "-webkit-text-fill-color": theme.palette.text.primary,
           },
           paddingLeft: "1rem",
           marginBottom: "-1.5rem",
@@ -184,12 +232,24 @@ const NotePage = () => {
             backgroundColor: AppTheme.palette.background.paper,
           }}
         >
-          {editorData && !isLoading ? (
-            <HiveEditor
-              data={editorData}
-              onChange={handleNoteContentChange}
-              holder={"editorjs-container"}
-            />
+          {isEditor !== undefined && editorData && !isLoading ? (
+            <>
+              {isEditor && (
+                <HiveEditor
+                  data={editorData}
+                  onChange={handleNoteContentChange}
+                  holder={"editorjs-container"}
+                />
+              )}
+              {!isEditor && (
+                <HiveEditor
+                  data={editorData}
+                  onChange={handleNoteContentChange}
+                  holder={"editorjs-container"}
+                  isReadOnly
+                />
+              )}
+            </>
           ) : (
             <HiveLoadingSpinner size="large" />
           )}

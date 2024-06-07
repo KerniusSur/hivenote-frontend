@@ -9,16 +9,17 @@ interface HiveEditorProps extends EditorConfig {
   onChange: (data: any) => void;
   holderStyle?: React.CSSProperties;
   holderSx?: SxProps;
+  isReadOnly?: boolean;
 }
 
 const HiveEditor = (props: HiveEditorProps) => {
-  //TODO: Adapt Editor to behive according to theme (see google docs for example)
-  const { data, onChange, holder, ...other } = props;
+  const { data, onChange, holder, isReadOnly, ...other } = props;
   const ref = useRef<EditorJS>();
   const holderRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (!ref.current) {
       const editor = new EditorJS({
+        readOnly: isReadOnly,
         holder: holder,
         autofocus: true,
         ...other,
