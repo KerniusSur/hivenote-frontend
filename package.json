@@ -41,7 +41,7 @@
     "react-router-dom": "^6.23.1",
     "react-toastify": "^10.0.5",
     "socket.io-client": "^4.7.5",
-    "web-vitals": "^4.0.1",
+    "web-vitals": "^4.1.0",
     "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },
@@ -92,6 +92,6 @@
     "prettier": "3.3.1",
     "swagger-typescript-api": "^13.0.5",
     "typescript": "^5.4.5",
-    "vite": "^5.2.12"
+    "vite": "^5.2.13"
   }
 }
