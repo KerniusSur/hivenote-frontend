@@ -41,7 +41,7 @@
     "react-router-dom": "^6.23.1",
     "react-toastify": "^10.0.5",
     "socket.io-client": "^4.7.5",
-    "web-vitals": "^4.0.1",
+    "web-vitals": "^4.1.1",
     "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },
@@ -75,23 +75,23 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@editorjs/checklist": "^1.6.0",
-    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
     "@types/jest": "^29.5.12",
-    "@types/lodash": "^4.17.4",
+    "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.2",
     "@types/react": "^18.3.3",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-big-calendar": "^1.8.9",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
     "cross-env": "^7.0.3",
     "eslint-plugin-react": "^7.34.2",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "prettier": "3.3.1",
+    "prettier": "3.3.2",
     "swagger-typescript-api": "^13.0.5",
     "typescript": "^5.4.5",
-    "vite": "^5.2.12"
+    "vite": "^5.2.13"
   }
 }
