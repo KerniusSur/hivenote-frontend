@@ -6,6 +6,7 @@ import {
   KeyboardArrowDownRounded,
   KeyboardArrowRightRounded,
   MoreHorizRounded,
+  ShareOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -19,16 +20,19 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { NoteResponse } from "api/data-contracts";
+import { NoteResponse, NoteShareRequest } from "api/data-contracts";
 import { Notes } from "api/Notes";
 import HiveNoteTextLogoWhite from "assets/hivenote-text-logo-white.svg";
 import HiveNoteTextLogo from "assets/hivenote-text-logo.svg";
-import { HiveSearchValues } from "components/search/HiveSearch";
+import ShareNoteDialog from "components/note/ShareNoteDialog";
+import { ShareNoteFormValues } from "components/note/ShareNoteForm";
 import { DrawerHeader } from "layouts/PublicLayout";
-import { useState } from "react";
+import NoteAccessType from "models/note/NoteAccessType";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createApi } from "utils/api/ApiCreator";
 import { hexToRgba } from "utils/ObjectUtils";
+import useAuthStore from "utils/stores/AuthStore";
 import useNoteStore from "utils/stores/NoteStore";
 
 interface HiveDrawerProps {
@@ -53,7 +57,6 @@ const HiveDrawer = (props: HiveDrawerProps) => {
     handleSelectNote,
     handleDeleteNote,
   } = props;
-
   const { activeNoteId } = useNoteStore();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -150,13 +153,15 @@ const DrawerContent = (props: DrawerContentProps) => {
     handleDeleteNote,
   } = props;
   const navigate = useNavigate();
+  const noteAPI = useRef(createApi("note") as Notes);
 
-  const noteAPI = createApi("note") as Notes;
-
-  const handleSearch = (values: HiveSearchValues) => {
-    console.log(values);
-  };
-
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState<{
+    open: boolean;
+    noteId?: string;
+  }>({
+    open: false,
+    noteId: undefined,
+  });
   const [menuState, setMenuState] = useState<{
     open: boolean;
     anchorEl: HTMLElement | null;
@@ -166,6 +171,30 @@ const DrawerContent = (props: DrawerContentProps) => {
     anchorEl: null,
     noteId: undefined,
   });
+
+  const handleOpenShareDialog = (noteId: string) => {
+    setIsShareDialogOpen({ open: true, noteId: noteId });
+  };
+
+  const handleCloseShareDialog = () => {
+    setIsShareDialogOpen({ open: false, noteId: undefined });
+  };
+
+  const handleShareNote = async (values: ShareNoteFormValues) => {
+    console.log("noteDIIDIDIDIDIID" + isShareDialogOpen.noteId);
+    if (!isShareDialogOpen.noteId) {
+      return;
+    }
+
+    const request: NoteShareRequest = {
+      noteId: isShareDialogOpen.noteId,
+      accessType: values.accessType,
+      emails: [values.email],
+    };
+
+    await noteAPI.current.shareNote(request);
+    handleCloseShareDialog();
+  };
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
@@ -275,6 +304,7 @@ const DrawerContent = (props: DrawerContentProps) => {
                 handleSelectNote={handleSelectNote}
                 handleCreateNote={handleCreateNote}
                 handleMenuOpen={handleMenuOpen}
+                handleOpenShareDialog={handleOpenShareDialog}
               />
             </Box>
           </Box>
@@ -307,6 +337,7 @@ const DrawerContent = (props: DrawerContentProps) => {
                 handleSelectNote={handleSelectNote}
                 handleCreateNote={handleCreateNote}
                 handleMenuOpen={handleMenuOpen}
+                handleOpenShareDialog={handleOpenShareDialog}
               />
             </Box>
           </Box>
@@ -341,6 +372,15 @@ const DrawerContent = (props: DrawerContentProps) => {
           <Typography variant="body2">Rename</Typography>
         </MenuItem>
       </Menu>
+
+      {isShareDialogOpen.noteId && (
+        <ShareNoteDialog
+          open={isShareDialogOpen.open}
+          dialogTitle="Share Note"
+          handleSubmit={handleShareNote}
+          handleClose={handleCloseShareDialog}
+        />
+      )}
     </Box>
   );
 };
@@ -386,6 +426,8 @@ export const NoteOptions = ({
   handleCreateNote,
   handleMenuOpen,
   depth,
+  isEditor,
+  handleOpenShareDialog,
 }: {
   noteId?: string;
   handleCreateNote: (parentId?: string) => void;
@@ -394,6 +436,8 @@ export const NoteOptions = ({
     noteId?: string
   ) => void;
   depth?: number;
+  isEditor: boolean;
+  handleOpenShareDialog: (noteId: string) => void;
 }) => {
   const theme = useTheme();
   return (
@@ -420,6 +464,24 @@ export const NoteOptions = ({
           }}
         />
       </IconButton>
+      {isEditor && noteId && (
+        <IconButton
+          sx={{
+            padding: "4px",
+          }}
+          onClick={(e) => {
+            handleOpenShareDialog(noteId);
+          }}
+        >
+          <ShareOutlined
+            sx={{
+              color: theme.palette.text.primary,
+              width: "16px",
+              height: "16px",
+            }}
+          />
+        </IconButton>
+      )}
       {(!depth || depth < 2) && (
         <IconButton
           sx={{
@@ -473,12 +535,20 @@ interface RecursiveNoteListProps {
     event: React.MouseEvent<HTMLElement>,
     noteId?: string
   ) => void;
+  handleOpenShareDialog: (noteId: string) => void;
 }
 
 const RecursiveNoteList = (props: RecursiveNoteListProps) => {
-  const { depth, notes, handleSelectNote, handleCreateNote, handleMenuOpen } =
-    props;
+  const {
+    depth,
+    notes,
+    handleSelectNote,
+    handleCreateNote,
+    handleMenuOpen,
+    handleOpenShareDialog,
+  } = props;
   const { activeNoteId } = useNoteStore();
+  const account = useAuthStore((state) => state.account);
   const [showNested, setShowNested] = useState<Record<string, boolean>>({});
 
   const handleShowNested = (noteId: string) => {
@@ -555,6 +625,15 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
                 noteId={note.id}
                 handleCreateNote={handleCreateNote}
                 handleMenuOpen={(e) => handleMenuOpen(e, note.id)}
+                handleOpenShareDialog={handleOpenShareDialog}
+                isEditor={
+                  note.collaborators?.length > 0 &&
+                  note.collaborators.filter(
+                    (c) =>
+                      c.accessType !== NoteAccessType.VIEWER &&
+                      c.account?.id === account?.id
+                  ).length > 0
+                }
               />
             </Box>
           </ListNoteItem>
@@ -571,6 +650,7 @@ const RecursiveNoteList = (props: RecursiveNoteListProps) => {
                 handleSelectNote={handleSelectNote}
                 handleCreateNote={handleCreateNote}
                 handleMenuOpen={handleMenuOpen}
+                handleOpenShareDialog={handleOpenShareDialog}
               />
             )}
           </Box>

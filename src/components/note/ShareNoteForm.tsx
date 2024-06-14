@@ -1,22 +1,61 @@
-import { Formik } from "formik";
+import {
+  FormContainer,
+  FormOuterContainer,
+} from "components/event/EventCreateEditForm";
+import HiveButton from "components/HiveButton";
+import HiveInput from "components/HiveInput";
+import HiveSelect from "components/HiveSelect";
+import { Form, Formik } from "formik";
 import NoteAccessType from "models/note/NoteAccessType";
+import { useState } from "react";
 import * as yup from "yup";
 
 interface ShareNoteFormProps {
-  noteId: string;
   handleSubmit: (values: ShareNoteFormValues) => void;
 }
 
 const ShareNoteForm = (props: ShareNoteFormProps) => {
-  const { noteId, handleSubmit } = props;
+  const { handleSubmit } = props;
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-      enableReinitialize
-    ></Formik>
+    <FormOuterContainer>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+        enableReinitialize
+      >
+        {(formik) => (
+          <FormContainer>
+            <HiveInput
+              name="email"
+              title="Add Collaborator"
+              placeholder="Enter the other user's email"
+              required
+            />
+            <HiveSelect
+              name="accessType"
+              title="Access Type"
+              options={[
+                { value: NoteAccessType.VIEWER, label: "Viewer" },
+                { value: NoteAccessType.EDITOR, label: "Editor" },
+              ]}
+            />
+            <HiveButton
+              compact
+              text="Share"
+              variant="contained"
+              disabled={formik.isSubmitting || !formik.isValid}
+              onClick={() => {
+                setIsSubmitted(true);
+                formik.handleSubmit();
+              }}
+            />
+          </FormContainer>
+        )}
+      </Formik>
+    </FormOuterContainer>
   );
 };
 

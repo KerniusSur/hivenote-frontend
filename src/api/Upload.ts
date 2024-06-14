@@ -36,26 +36,4 @@ export class Upload<
       type: ContentType.FormData,
       ...params,
     });
-  /**
-   * No description
-   *
-   * @tags document-controller
-   * @name UploadImage
-   * @request POST:/api/v1/file/upload/{componentId}
-   */
-  uploadImage = (
-    componentId: string,
-    data: {
-      /** @format binary */
-      file: File;
-    },
-    params: RequestParams = {}
-  ) =>
-    this.request<FileUploadResponse, any>({
-      path: `/api/v1/file/upload/${componentId}`,
-      method: "POST",
-      body: data,
-      type: ContentType.FormData,
-      ...params,
-    });
 }

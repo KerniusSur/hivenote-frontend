@@ -53,6 +53,19 @@ export class Events<
    * No description
    *
    * @tags events
+   * @name LinkToNote
+   * @request PUT:/api/v1/user/events/{id}/link/note/{noteId}
+   */
+  linkToNote = (id: string, noteId: string, params: RequestParams = {}) =>
+    this.request<void, any>({
+      path: `/api/v1/user/events/${id}/link/note/${noteId}`,
+      method: "PUT",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags events
    * @name FindById
    * @request GET:/api/v1/user/events/{id}
    */

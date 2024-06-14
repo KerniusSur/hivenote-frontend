@@ -6,39 +6,28 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-import { EventResponse } from "api/data-contracts";
-import EventCreateEditForm from "components/EventCreateEditForm";
-import CalendarEvent from "models/calendar/CalendarEvent";
+import ShareNoteForm, {
+  ShareNoteFormValues,
+} from "components/note/ShareNoteForm";
 
-interface EventCreateEditDialogProps {
+interface Props {
   open: boolean;
-  isEdit?: boolean;
   dialogTitle?: string;
-  event?: EventResponse;
-  newEvent?: CalendarEvent;
-  handleSubmit: (values: any) => void;
+  handleSubmit: (values: ShareNoteFormValues) => void;
   handleClose: () => void;
-  handleCancel?: () => void;
 }
 
-const EventCreateEditDialog = (props: EventCreateEditDialogProps) => {
-  const {
-    open,
-    isEdit,
-    dialogTitle,
-    event,
-    newEvent,
-    handleSubmit,
-    handleClose,
-    handleCancel,
-  } = props;
+const ShareNoteDialog = (props: Props) => {
+  const { open, dialogTitle, handleSubmit, handleClose } = props;
   const isMobile = useMediaQuery("(max-width: 600px)");
-
   return (
     <Dialog
       open={open}
       sx={{
         width: "100%",
+        height: isMobile ? "100%" : "360px",
+        minHeight: "360px",
+        top: "calc(50% - 360px)",
       }}
       PaperProps={{
         sx: {
@@ -65,15 +54,9 @@ const EventCreateEditDialog = (props: EventCreateEditDialogProps) => {
           <CloseRounded />
         </IconButton>
       </Box>
-      <EventCreateEditForm
-        isEdit={isEdit}
-        event={event}
-        newEvent={newEvent}
-        handleSubmit={handleSubmit}
-        handleCancel={handleCancel}
-      />
+      <ShareNoteForm handleSubmit={handleSubmit} />
     </Dialog>
   );
 };
 
-export default EventCreateEditDialog;
+export default ShareNoteDialog;
