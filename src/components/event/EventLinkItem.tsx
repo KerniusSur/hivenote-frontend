@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { EventResponse } from "api/data-contracts";
 
 interface Props {
@@ -9,8 +9,21 @@ interface Props {
 const EventLinkItem = (props: Props) => {
   const { event, handleClick } = props;
   return (
-    <Box>
-      <Box></Box>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "10px",
+        borderBottom: "1px solid #e0e0e0",
+        cursor: "pointer",
+      }}
+      onClick={handleClick}
+    >
+      <Box>
+        <Typography variant="h6">{event.title}</Typography>
+      </Box>
     </Box>
   );
 };

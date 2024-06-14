@@ -23,6 +23,7 @@ import { createApi } from "utils/api/ApiCreator";
 import useAuthStore from "utils/stores/AuthStore";
 import useSocketStore from "utils/stores/SocketStore";
 import "./Editor.css";
+import EventLinkItem from "components/event/EventLinkItem";
 
 export interface NoteDataItem {
   text?: string;
@@ -216,6 +217,22 @@ const NotePage = () => {
           handleNoteTitleChange(e.target.value, noteMessage?.coverUrl);
         }}
       />
+      {note && note.events && note.events.length > 0 && (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
+          }}
+        >
+          {note.events.map((event) => (
+            <EventLinkItem
+              event={event}
+              handleClick={() => console.log("Event clicked", event)}
+            />
+          ))}
+        </Box>
+      )}
       <Box
         sx={{
           display: "flex",

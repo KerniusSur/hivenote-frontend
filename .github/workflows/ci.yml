@@ -77,7 +77,7 @@ jobs:
           username: ${{env.REMOTE_USERNAME}}
           port: ${{env.REMOTE_PORT}}
           key: ${{env.REMOTE_PRIVATE_KEY}}
-          passphrase: ${{env.REMOTE_PASSPHRASE}}
+          # passphrase: ${{env.REMOTE_PASSPHRASE}}
           script: |
             sh start.sh
 
@@ -93,7 +93,7 @@ jobs:
           username: ${{env.VU_REMOTE_USERNAME}}
           port: ${{env.VU_REMOTE_PORT}}
           key: ${{env.VU_REMOTE_PRIVATE_KEY}}
-          passphrase: ${{env.VU_REMOTE_PRIVATE_KEY}}
+          # passphrase: ${{env.VU_REMOTE_PRIVATE_KEY}}
           script: |
             sh start.sh
 
