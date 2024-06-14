@@ -9,10 +9,16 @@
  * ---------------------------------------------------------------
  */
 
-import { EventCreateRequest, EventResponse, EventUpdateRequest } from "./data-contracts";
+import {
+  EventCreateRequest,
+  EventResponse,
+  EventUpdateRequest,
+} from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Events<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+export class Events<
+  SecurityDataType = unknown,
+> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -41,6 +47,19 @@ export class Events<SecurityDataType = unknown> extends HttpClient<SecurityDataT
       method: "POST",
       body: data,
       type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags events
+   * @name LinkToNote
+   * @request PUT:/api/v1/user/events/{id}/link/note/{noteId}
+   */
+  linkToNote = (id: string, noteId: string, params: RequestParams = {}) =>
+    this.request<void, any>({
+      path: `/api/v1/user/events/${id}/link/note/${noteId}`,
+      method: "PUT",
       ...params,
     });
   /**

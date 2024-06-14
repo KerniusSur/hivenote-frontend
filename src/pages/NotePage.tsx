@@ -201,7 +201,8 @@ const NotePage = () => {
           },
           "& .Mui-disabled": {
             color: theme.palette.text.primary,
-            "-webkit-text-fill-color": theme.palette.text.primary,
+            "-webkit-text-fill-color":
+              theme.palette.text.primary + " !important",
           },
           paddingLeft: "1rem",
           marginBottom: "-1.5rem",

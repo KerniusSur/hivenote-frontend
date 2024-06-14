@@ -13,10 +13,11 @@ import {
   EventUpdateRequest,
 } from "api/data-contracts";
 import { Events } from "api/Events";
+import "components/calendar/Calendar.css";
 import CalendarHeader from "components/calendar/CalendarHeader";
 import WeekHeader, { isWeekend } from "components/calendar/WeekHeader";
-import EventCreateEditDialog from "components/EventCreateEditDialog";
-import { EventFormValues } from "components/EventCreateEditForm";
+import { EventFormValues } from "components/event/EventCreateEditForm";
+import EventCreateEditDialog from "components/event/EventCreateEditDialog";
 import HiveButton from "components/HiveButton";
 import HiveLoadingSpinner from "components/HiveLoadingSpinner";
 import CalendarEvent from "models/calendar/CalendarEvent";
@@ -33,7 +34,6 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { createApi } from "utils/api/ApiCreator";
 import { getDate } from "utils/ObjectUtils";
 import { surfaceDark, surfaceLight } from "utils/theme/colors";
-import "components/calendar/Calendar.css";
 
 moment.tz.setDefault("Europe/Vilnius");
 const CalendarPage = () => {

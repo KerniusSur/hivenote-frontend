@@ -62,18 +62,47 @@ export interface ComponentProperties {
 export interface ComponentResponse {
   /** @format uuid */
   id?: string;
-  type?: "header" | "paragraph" | "list" | "checklist" | "image" | "link" | "linkTool" | "raw";
+  type?:
+    | "header"
+    | "paragraph"
+    | "list"
+    | "checklist"
+    | "image"
+    | "link"
+    | "linkTool"
+    | "raw";
   /** @format int32 */
   priority?: number;
   properties?: ComponentProperties;
   parent?: ComponentResponse;
 }
 
+export interface EventResponse {
+  /** @format uuid */
+  id: string;
+  title: string;
+  description?: string;
+  location?: string;
+  /** @format date-time */
+  eventStart: string;
+  /** @format date-time */
+  eventEnd: string;
+  notes?: NoteMinResponse[];
+  createdBy: AccountPublicResponse;
+}
+
 export interface NoteAccessResponse {
   /** @format uuid */
   noteId: string;
-  account?: AccountPublicResponse;
-  accessType?: "OWNER" | "EDITOR" | "VIEWER";
+  account: AccountPublicResponse;
+  accessType: "OWNER" | "EDITOR" | "VIEWER";
+}
+
+export interface NoteMinResponse {
+  /** @format uuid */
+  id: string;
+  title: string;
+  collaborators: NoteAccessResponse[];
 }
 
 export interface NoteResponse {
@@ -87,6 +116,7 @@ export interface NoteResponse {
   collaborators: NoteAccessResponse[];
   comments?: CommentResponse[];
   children?: NoteResponse[];
+  events?: EventResponse[];
 }
 
 export interface NoteShareRequest {
@@ -106,19 +136,6 @@ export interface EventUpdateRequest {
   eventEnd: string;
   /** @format uuid */
   id: string;
-}
-
-export interface EventResponse {
-  /** @format uuid */
-  id: string;
-  title: string;
-  description?: string;
-  location?: string;
-  /** @format date-time */
-  eventStart: string;
-  /** @format date-time */
-  eventEnd: string;
-  createdBy: AccountPublicResponse;
 }
 
 export interface UpdateAccountInfoRequest {
