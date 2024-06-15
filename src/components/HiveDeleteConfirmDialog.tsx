@@ -64,8 +64,14 @@ const HiveDeleteConfirmDialog = (props: HiveDeleteConfirmDialogProps) => {
           justifyContent: "space-between",
         }}
       >
-        <HiveButton text="Cancel" color="secondary" onClick={handleClose} />
         <HiveButton
+          compact
+          text="Cancel"
+          color="secondary"
+          onClick={handleClose}
+        />
+        <HiveButton
+          compact
           text="Confirm"
           color="primary"
           onClick={handleDeleteClick}

@@ -56,9 +56,7 @@ const HiveDatePicker = (props: HiveDatePickerProps) => {
     >
       {title && (
         <Typography
-          variant="body1"
-          fontWeight={600}
-          fontSize={14}
+          variant="body2"
           color="text.secondary"
         >
           {title}

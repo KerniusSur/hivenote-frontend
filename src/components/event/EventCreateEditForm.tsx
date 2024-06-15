@@ -1,16 +1,19 @@
 import { CancelOutlined, DeleteRounded } from "@mui/icons-material";
-import { Box, Divider, styled, Typography, useMediaQuery } from "@mui/material";
-import { EventResponse } from "api/data-contracts";
+import { Box, Divider, SelectChangeEvent, styled, Typography, useMediaQuery } from "@mui/material";
+import { EventResponse, NoteResponse } from "api/data-contracts";
 import { Events } from "api/Events";
+import { Notes } from "api/Notes";
 import HiveButton from "components/HiveButton";
 import HiveDatePicker from "components/HiveDatePicker";
 import HiveDeleteConfirmDialog from "components/HiveDeleteConfirmDialog";
 import HiveInput from "components/HiveInput";
+import HiveSelect, { HiveSelectOptions } from "components/HiveSelect";
 import HiveTimePicker from "components/HiveTimePicker";
 import { Form, Formik, FormikHelpers } from "formik";
 import CalendarEvent from "models/calendar/CalendarEvent";
+import NoteAccessType from "models/note/NoteAccessType";
 import moment from "moment";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { createApi } from "utils/api/ApiCreator";
 import * as yup from "yup";
@@ -29,8 +32,29 @@ interface EventCreateEditFormProps {
 const EventCreateEditForm = (props: EventCreateEditFormProps) => {
   const { event, newEvent, isEdit, handleSubmit, handleCancel } = props;
   const eventAPI = useRef(createApi("event") as Events);
+  const noteAPI = useRef(createApi("note") as Notes);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [notes, setNotes] = useState<NoteResponse[]>([]);
+  const [noteOptions, setNoteOptions] = useState<HiveSelectOptions[]>([]);
+
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const fetchNotes = async () => {
+    const query = {
+      accessType: NoteAccessType.OWNER,
+      accessType2: NoteAccessType.EDITOR,
+    };
+    const notes = await noteAPI.current.findAllFilteredBy(query);
+    setNotes(notes);
+    const noteOptions: HiveSelectOptions[] = notes.map((note) => ({
+      value: note.id,
+      label: note.title ?? "Untitled note",
+    }));
+    setNoteOptions(noteOptions);
+  };
 
   const handleDeleteDialogOpen = () => {
     setDeleteDialogOpen(true);
@@ -103,9 +127,7 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
               />
               <HiveDatePicker title="Date" label="date" />
               <Box>
-                <Typography variant="body1" fontSize={14} fontWeight={600}>
-                  Time
-                </Typography>
+                <Typography variant="body2">Time</Typography>
                 <Box
                   sx={{
                     display: "flex",
@@ -114,12 +136,21 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
                     gap: "1rem",
                   }}
                 >
-                  <HiveTimePicker isClockInterface label="startTime" />
+                  <HiveTimePicker isClockInterface label="eventStart" />
                   <Typography variant="body1" alignSelf="center">
                     to
                   </Typography>
-                  <HiveTimePicker isClockInterface label="endTime" />
+                  <HiveTimePicker isClockInterface label="eventEnd" />
                 </Box>
+                <HiveSelect
+                  containerStyle={{
+                    marginTop: "1rem",
+                  }}
+                  multiple
+                  name="relatedToEvents"
+                  title="Related to?"
+                  options={noteOptions}
+                />
               </Box>
             </FormContainer>
             <Box
@@ -164,7 +195,10 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
               <HiveDeleteConfirmDialog
                 open={deleteDialogOpen}
                 objectName="Event"
-                handleClose={handleDeleteDialogClose}
+                handleClose={() => {
+                  handleDeleteDialogClose();
+                  handleCancel();
+                }}
                 handleDelete={handleDelete}
               />
             )}
@@ -216,6 +250,7 @@ export interface EventFormValues {
   date: Date | null;
   eventStart: Date | null;
   eventEnd: Date | null;
+  relatedToEvents: string[];
 }
 
 const initialValues: EventFormValues = {
@@ -225,6 +260,7 @@ const initialValues: EventFormValues = {
   date: null,
   eventStart: null,
   eventEnd: null,
+  relatedToEvents: [],
 };
 
 const getInitialValues = (event?: EventResponse): EventFormValues => {
@@ -239,8 +275,19 @@ const getInitialValues = (event?: EventResponse): EventFormValues => {
     date: moment(event.eventStart).toDate(),
     eventStart: moment(event.eventStart).toDate(),
     eventEnd: moment(event.eventEnd).toDate(),
+    relatedToEvents: event.notes.map((note) => note.id),
   };
 };
+ const handleChange = (event: SelectChangeEvent<string[]>) => {
+   const {
+     target: { value },
+   } = event;
+  //  setPersonName(
+  //    // On autofill we get a stringified value.
+  //    typeof value === "string" ? value.split(",") : value
+  //  );
+
+ };
 
 const getInitialValuesFromCalendarEvent = (
   newEvent?: CalendarEvent
@@ -256,6 +303,7 @@ const getInitialValuesFromCalendarEvent = (
     date: moment(newEvent.start).toDate(),
     eventStart: moment(newEvent.start).toDate(),
     eventEnd: moment(newEvent.end).toDate(),
+    relatedToEvents: [],
   };
 };
 
@@ -265,8 +313,8 @@ const getValidationSchema = () => {
     description: yup.string().required("Description is required"),
     location: yup.string().required("Location is required"),
     date: yup.date().required("Date is required"),
-    startTime: yup.string().required("Start time is required"),
-    endTime: yup.string().required("End time is required"),
+    eventStart: yup.date().required("Start time is required"),
+    eventEnd: yup.date().required("End time is required"),
   });
 
   return validationSchema;

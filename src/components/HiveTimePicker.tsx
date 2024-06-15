@@ -5,10 +5,11 @@ import {
   MobileTimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useField } from "formik";
+import { useState } from "react";
 
 interface HiveTimePickerProps {
   title?: string;
@@ -24,18 +25,25 @@ const HiveTimePicker = (props: HiveTimePickerProps) => {
   dayjs.extend(timezone);
   dayjs.tz.setDefault("Europe/Vilnius");
 
-  const [field, meta] = useField(label);
+  const [field, meta, helper] = useField(label);
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const [value, setValue] = useState<string | null | undefined>(
+    dayjs(field.value).toISOString()
+  );
 
-  const handleChange = (newValue: string | null) => {
+  const handleChange = (newValue: string | null | undefined) => {
+    setValue(newValue);
     field.onChange({
       target: { name: label, value: dayjs(newValue).toDate() },
     });
   };
 
-  const submitValue = (value: string | null) => {
+  const submitValue = (value: string | null | undefined) => {
+    setValue(value);
+    helper.setValue(dayjs(value).toDate());
     field.onChange({ target: { name: label, value: dayjs(value).toDate() } });
   };
+
 
   return (
     <Box
@@ -47,7 +55,7 @@ const HiveTimePicker = (props: HiveTimePickerProps) => {
       }}
     >
       {title && (
-        <Typography variant="body1" fontWeight={600} fontSize={14}>
+        <Typography variant="body2">
           {title}
         </Typography>
       )}

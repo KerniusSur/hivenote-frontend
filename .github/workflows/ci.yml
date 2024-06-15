@@ -6,6 +6,8 @@ permissions:
   contents: read
 
 env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_ACCESS_TOKEN: ${{ secrets.DOCKER_ACCESS_TOKEN }}
   AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: eu-central-1
@@ -13,12 +15,10 @@ env:
   REMOTE_USERNAME: ${{ secrets.REMOTE_USERNAME }}
   REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
   REMOTE_PRIVATE_KEY: ${{ secrets.REMOTE_PRIVATE_KEY }}
-  REMOTE_PASSPHRASE: ${{ secrets.REMOTE_PASSPHRASE }}
   VU_REMOTE_HOST: ${{ secrets.VU_REMOTE_HOST }}
   VU_REMOTE_USERNAME: ${{ secrets.VU_REMOTE_USERNAME }}
   VU_REMOTE_PORT: ${{ secrets.VU_REMOTE_PORT }}
   VU_REMOTE_PRIVATE_KEY: ${{ secrets.VU_REMOTE_PRIVATE_KEY }}
-  VU_REMOTE_PASSPHRASE: ${{ secrets.VU_REMOTE_PASSPHRASE }}
 
 on:
   push:
@@ -50,7 +50,7 @@ jobs:
         run: |
           sh build.sh
 
-  deploy:
+  deploy_aws:
     if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-latest
     needs: [build]
@@ -66,35 +66,51 @@ jobs:
           aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{env.AWS_REGION}}
 
-      - name: publish
+      - name: publish docker image
         run: |
           sh publish.sh
 
-      - name: Restart apps in remote
+      - name: Restart apps in AWS remote
         uses: appleboy/ssh-action@master
         with:
           host: ${{env.REMOTE_HOST}}
           username: ${{env.REMOTE_USERNAME}}
           port: ${{env.REMOTE_PORT}}
           key: ${{env.REMOTE_PRIVATE_KEY}}
-          # passphrase: ${{env.REMOTE_PASSPHRASE}}
           script: |
             sh start.sh
 
+  deploy_vu:
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    needs: [build]
 
-      - name: publish to VU resources
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{env.AWS_ACCESS_KEY}}
+          aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{env.AWS_REGION}}
+
+      - name: build and publish opennebula image
         run: |
           sh publish-opennebula.sh
 
-      - name: Restart apps in remote
+      - name: Rebuild and start docker containers in VU remote
         uses: appleboy/ssh-action@master
         with:
           host: ${{env.VU_REMOTE_HOST}}
           username: ${{env.VU_REMOTE_USERNAME}}
           port: ${{env.VU_REMOTE_PORT}}
           key: ${{env.VU_REMOTE_PRIVATE_KEY}}
-          # passphrase: ${{env.VU_REMOTE_PRIVATE_KEY}}
+          script_stop: true
           script: |
             sh start.sh
+
+            
 
     

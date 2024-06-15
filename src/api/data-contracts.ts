@@ -62,15 +62,7 @@ export interface ComponentProperties {
 export interface ComponentResponse {
   /** @format uuid */
   id?: string;
-  type?:
-    | "header"
-    | "paragraph"
-    | "list"
-    | "checklist"
-    | "image"
-    | "link"
-    | "linkTool"
-    | "raw";
+  type?: "header" | "paragraph" | "list" | "checklist" | "image" | "link" | "linkTool" | "raw";
   /** @format int32 */
   priority?: number;
   properties?: ComponentProperties;
@@ -87,7 +79,7 @@ export interface EventResponse {
   eventStart: string;
   /** @format date-time */
   eventEnd: string;
-  notes?: NoteMinResponse[];
+  notes: NoteMinResponse[];
   createdBy: AccountPublicResponse;
 }
 

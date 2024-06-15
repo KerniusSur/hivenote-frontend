@@ -2,13 +2,13 @@ import { Button, ButtonProps, Typography } from "@mui/material";
 
 interface HiveButtonProps extends ButtonProps {
   text: string;
-  compact: boolean;
+  compact?: boolean;
   startIcon?: JSX.Element;
   endIcon?: JSX.Element;
 }
 
 const HiveButton = (props: HiveButtonProps) => {
-  const { text, startIcon, compact, endIcon, ...other } = props;
+  const { text, startIcon, compact = false, endIcon, ...other } = props;
   return (
     <Button
       fullWidth={!compact}
@@ -29,10 +29,6 @@ const HiveButton = (props: HiveButtonProps) => {
       {props.endIcon}
     </Button>
   );
-};
-
-HiveButton.defaultProps = {
-  compact: false,
 };
 
 export default HiveButton;

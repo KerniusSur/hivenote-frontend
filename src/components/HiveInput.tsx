@@ -1,9 +1,9 @@
 import { VisibilityOffRounded, VisibilityRounded } from "@mui/icons-material";
 import {
+  BaseTextFieldProps,
   Box,
   IconButton,
   InputAdornment,
-  OutlinedTextFieldProps,
   TextField,
   Typography,
   useTheme,
@@ -11,7 +11,7 @@ import {
 import { useField } from "formik";
 import { useState } from "react";
 
-interface HiveInputProps extends OutlinedTextFieldProps {
+interface HiveInputProps extends BaseTextFieldProps {
   name: string;
   title?: string;
   startIcon?: JSX.Element;
@@ -19,7 +19,13 @@ interface HiveInputProps extends OutlinedTextFieldProps {
 }
 
 const HiveInput = (props: HiveInputProps) => {
-  const { name, title, startIcon, endIcon, ...other } = props;
+  const {
+    name,
+    title,
+    startIcon,
+    endIcon,
+    ...other
+  } = props;
   const [field, meta, helpers] = useField(props.name);
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const togglePasswordVisibility = () => {
@@ -44,11 +50,12 @@ const HiveInput = (props: HiveInputProps) => {
             justifyContent: "space-between",
           }}
         >
-          <Typography variant="body3">{props.title}</Typography>
+          <Typography variant="body2">{props.title}</Typography>
         </Box>
       )}
       <TextField
         fullWidth
+        variant="outlined"
         error={meta.touched && Boolean(meta.error)}
         InputLabelProps={{
           style: {
@@ -119,8 +126,4 @@ const getInputProps = (startIcon?: JSX.Element, endIcon?: JSX.Element) => {
       endAdornment: endAdornment,
     };
   }
-};
-
-HiveInput.defaultProps = {
-  variant: "outlined",
 };

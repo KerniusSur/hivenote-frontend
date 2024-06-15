@@ -34,6 +34,7 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { createApi } from "utils/api/ApiCreator";
 import { getDate } from "utils/ObjectUtils";
 import { surfaceDark, surfaceLight } from "utils/theme/colors";
+import { Notes } from "api/Notes";
 
 moment.tz.setDefault("Europe/Vilnius");
 const CalendarPage = () => {
@@ -71,6 +72,7 @@ const CalendarPage = () => {
   const theme = useTheme();
   const calendarRef = useRef(null);
   const eventAPI = useRef(createApi("event") as Events);
+  const noteAPI = useRef(createApi("note") as Notes);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const DnDCalendar = withDragAndDrop(Calendar);
 
@@ -273,7 +275,7 @@ const CalendarPage = () => {
         id: "temp",
         start,
         end,
-        title: "New appointment",
+        title: "",
         isResizable: true,
         isDraggable: true,
       };

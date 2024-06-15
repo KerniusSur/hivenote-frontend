@@ -12,9 +12,7 @@
 import { FileUploadResponse } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Upload<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class Upload<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
