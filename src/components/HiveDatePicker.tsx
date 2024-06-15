@@ -55,10 +55,7 @@ const HiveDatePicker = (props: HiveDatePickerProps) => {
       }}
     >
       {title && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-        >
+        <Typography variant="body2" color="text.secondary">
           {title}
         </Typography>
       )}

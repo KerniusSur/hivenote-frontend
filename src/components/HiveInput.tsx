@@ -19,13 +19,7 @@ interface HiveInputProps extends BaseTextFieldProps {
 }
 
 const HiveInput = (props: HiveInputProps) => {
-  const {
-    name,
-    title,
-    startIcon,
-    endIcon,
-    ...other
-  } = props;
+  const { name, title, startIcon, endIcon, ...other } = props;
   const [field, meta, helpers] = useField(props.name);
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const togglePasswordVisibility = () => {

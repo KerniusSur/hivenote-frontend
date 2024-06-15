@@ -1,5 +1,12 @@
 import { CancelOutlined, DeleteRounded } from "@mui/icons-material";
-import { Box, Divider, SelectChangeEvent, styled, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Divider,
+  SelectChangeEvent,
+  styled,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import { EventResponse, NoteResponse } from "api/data-contracts";
 import { Events } from "api/Events";
 import { Notes } from "api/Notes";
@@ -278,16 +285,15 @@ const getInitialValues = (event?: EventResponse): EventFormValues => {
     relatedToEvents: event.notes.map((note) => note.id),
   };
 };
- const handleChange = (event: SelectChangeEvent<string[]>) => {
-   const {
-     target: { value },
-   } = event;
+const handleChange = (event: SelectChangeEvent<string[]>) => {
+  const {
+    target: { value },
+  } = event;
   //  setPersonName(
   //    // On autofill we get a stringified value.
   //    typeof value === "string" ? value.split(",") : value
   //  );
-
- };
+};
 
 const getInitialValuesFromCalendarEvent = (
   newEvent?: CalendarEvent

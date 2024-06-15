@@ -44,7 +44,6 @@ const HiveTimePicker = (props: HiveTimePickerProps) => {
     field.onChange({ target: { name: label, value: dayjs(value).toDate() } });
   };
 
-
   return (
     <Box
       style={{
@@ -54,11 +53,7 @@ const HiveTimePicker = (props: HiveTimePickerProps) => {
         gap: "4px",
       }}
     >
-      {title && (
-        <Typography variant="body2">
-          {title}
-        </Typography>
-      )}
+      {title && <Typography variant="body2">{title}</Typography>}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         {(isMobile || isClockInterface) && (
           <MobileTimePicker
