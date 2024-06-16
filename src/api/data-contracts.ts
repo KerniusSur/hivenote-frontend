@@ -134,6 +134,7 @@ export interface EventUpdateRequest {
   eventStart: string;
   /** @format date-time */
   eventEnd: string;
+  noteIds?: string[];
   /** @format uuid */
   id: string;
 }
@@ -178,6 +179,7 @@ export interface EventCreateRequest {
   eventStart: string;
   /** @format date-time */
   eventEnd: string;
+  noteIds?: string[];
 }
 
 export interface RegisterRequest {

@@ -1,6 +1,6 @@
 import "@fontsource/roboto";
 import "@fontsource/roboto/700.css";
-import { Box, Input, useTheme } from "@mui/material";
+import { Box, Divider, Input, Typography, useTheme } from "@mui/material";
 import { NoteResponse } from "api/data-contracts";
 import { Notes } from "api/Notes";
 import AppTheme from "AppTheme";
@@ -17,7 +17,7 @@ import NoteMessage from "models/message/NoteMessage";
 import NoteRequestMessage from "models/message/NoteRequestMessage";
 import NoteAccessType from "models/note/NoteAccessType";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createApi } from "utils/api/ApiCreator";
 import useAuthStore from "utils/stores/AuthStore";
@@ -36,6 +36,7 @@ const NotePage = () => {
   const theme = useTheme();
   const noteAPI = createApi("note") as Notes;
   const account = useAuthStore((state) => state.account);
+  const navigate = useNavigate();
 
   const [noteMessage, setNoteMessage] = useState<NoteMessage | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -44,8 +45,6 @@ const NotePage = () => {
   const [isShareDialogOpen, setIsShareDialogOpen] = useState<boolean>(false);
   const [note, setNote] = useState<NoteResponse | undefined>();
   const [isEditor, setIsEditor] = useState<boolean | undefined>(undefined);
-
-  console.log("NotePage rerenedered");
 
   socket.on(NOTE.SERVER_EVENT.RETURN_NOTE, (message: NoteMessage) => {
     setNoteMessage(message);
@@ -182,6 +181,37 @@ const NotePage = () => {
         boxSizing: "border-box",
       }}
     >
+      {note && note.events && note.events.length > 0 && (
+        <>
+          <Divider />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: ".75rem",
+            }}
+          >
+            <Typography variant="title2" fontSize={20}>
+              Linked events:
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+              }}
+            >
+              {note.events.map((event) => (
+                <EventLinkItem
+                  event={event}
+                  handleClick={() => navigate(`/calendar/${event.id}`)}
+                />
+              ))}
+            </Box>
+          </Box>
+          <Divider />
+        </>
+      )}
       <Input
         id={"title-input-" + noteId}
         placeholder="Untitled"
@@ -217,22 +247,7 @@ const NotePage = () => {
           handleNoteTitleChange(e.target.value, noteMessage?.coverUrl);
         }}
       />
-      {note && note.events && note.events.length > 0 && (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "1rem",
-          }}
-        >
-          {note.events.map((event) => (
-            <EventLinkItem
-              event={event}
-              handleClick={() => console.log("Event clicked", event)}
-            />
-          ))}
-        </Box>
-      )}
+
       <Box
         sx={{
           display: "flex",

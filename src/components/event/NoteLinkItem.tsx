@@ -1,15 +1,15 @@
 import { EventOutlined } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
-import { EventResponse } from "api/data-contracts";
+import { EventResponse, NoteMinResponse } from "api/data-contracts";
 import { elevationLight } from "utils/theme/colors";
 
 interface Props {
-  event: EventResponse;
+  note: NoteMinResponse;
   handleClick: () => void;
 }
 
-const EventLinkItem = (props: Props) => {
-  const { event, handleClick } = props;
+const NoteLinkItem = (props: Props) => {
+  const { note, handleClick } = props;
   return (
     <Box
       sx={{
@@ -22,6 +22,7 @@ const EventLinkItem = (props: Props) => {
         cursor: "pointer",
         minWidth: "100px",
         borderRadius: "6px",
+        width: "100%",
         boxShadow: elevationLight.elevation1,
       }}
       onClick={handleClick}
@@ -46,11 +47,11 @@ const EventLinkItem = (props: Props) => {
             fontStyle: "italic",
           }}
         >
-          {event.title}
+          {note.title}
         </Typography>
       </Box>
     </Box>
   );
 };
 
-export default EventLinkItem;
+export default NoteLinkItem;

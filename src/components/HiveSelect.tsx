@@ -82,7 +82,6 @@ const HiveSelect = (props: Props) => {
               width: "100%",
             }}
           >
-            {console.log("selected", selected)}
             {selected[0].length > 0 &&
               selected[0].map((value: string, index: number) => (
                 <Box

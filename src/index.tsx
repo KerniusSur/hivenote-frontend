@@ -88,6 +88,12 @@ export const layouts: PathGroup[] = [
         access: undefined,
         tag: "calendar-page",
       },
+      {
+        path: "calendar/:eventId",
+        element: <CalendarPage />,
+        access: undefined,
+        tag: "calendar-page-event-view",
+      },
     ],
   },
   {
