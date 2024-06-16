@@ -6,10 +6,12 @@ import {
   styled,
   Typography,
   useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { EventResponse, NoteResponse } from "api/data-contracts";
 import { Events } from "api/Events";
 import { Notes } from "api/Notes";
+import NoteLinkItem from "components/event/NoteLinkItem";
 import HiveButton from "components/HiveButton";
 import HiveDatePicker from "components/HiveDatePicker";
 import HiveDeleteConfirmDialog from "components/HiveDeleteConfirmDialog";
@@ -21,6 +23,7 @@ import CalendarEvent from "models/calendar/CalendarEvent";
 import NoteAccessType from "models/note/NoteAccessType";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createApi } from "utils/api/ApiCreator";
 import * as yup from "yup";
@@ -40,6 +43,8 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
   const { event, newEvent, isEdit, handleSubmit, handleCancel } = props;
   const eventAPI = useRef(createApi("event") as Events);
   const noteAPI = useRef(createApi("note") as Notes);
+  const navigate = useNavigate();
+  const theme = useTheme();
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [notes, setNotes] = useState<NoteResponse[]>([]);
@@ -78,6 +83,8 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
 
     await eventAPI.current.delete(event.id);
     toast.success("Event deleted successfully");
+    handleDeleteDialogClose();
+    handleCancel && handleCancel();
   };
 
   const onSubmit = (
@@ -103,7 +110,7 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
         {(formik) => (
           <Form
             style={{
-              height: "100%",
+              height: event && event.notes.length > 0 ? "" : "100%",
             }}
           >
             <FormContainer>
@@ -149,13 +156,38 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
                   </Typography>
                   <HiveTimePicker isClockInterface label="eventEnd" />
                 </Box>
+                {event && event.notes.length > 0 && (
+                  <>
+                    <Divider sx={{ margin: "1rem 0" }} />
+                    <Typography variant="title2" fontSize={20}>
+                      Linked notes:
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "1rem",
+                        marginTop: "1rem",
+                        // marginBottom: "2rem",
+                      }}
+                    >
+                      {event.notes.map((note) => (
+                        <NoteLinkItem
+                          key={note.id}
+                          note={note}
+                          handleClick={() => navigate(`/note/${note.id}`)}
+                        />
+                      ))}
+                    </Box>
+                  </>
+                )}
                 <HiveSelect
                   containerStyle={{
                     marginTop: "1rem",
                   }}
                   multiple
                   name="relatedToEvents"
-                  title="Related to?"
+                  title="Related notes"
                   options={noteOptions}
                 />
               </Box>
@@ -170,6 +202,7 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
                 position: "sticky",
                 backgroundColor: "transparent",
                 bottom: "0",
+                // background:
               }}
             >
               {!isEdit && handleCancel && (
@@ -204,7 +237,6 @@ const EventCreateEditForm = (props: EventCreateEditFormProps) => {
                 objectName="Event"
                 handleClose={() => {
                   handleDeleteDialogClose();
-                  handleCancel();
                 }}
                 handleDelete={handleDelete}
               />

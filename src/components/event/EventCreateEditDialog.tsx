@@ -7,10 +7,14 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { EventResponse } from "api/data-contracts";
+import { Events } from "api/Events";
 import EventCreateEditForm from "components/event/EventCreateEditForm";
 import CalendarEvent from "models/calendar/CalendarEvent";
+import { useEffect, useRef, useState } from "react";
+import { createApi } from "utils/api/ApiCreator";
 
 interface EventCreateEditDialogProps {
+  paramEventId?: string;
   open: boolean;
   isEdit?: boolean;
   dialogTitle?: string;
@@ -23,6 +27,7 @@ interface EventCreateEditDialogProps {
 
 const EventCreateEditDialog = (props: EventCreateEditDialogProps) => {
   const {
+    paramEventId,
     open,
     isEdit,
     dialogTitle,
@@ -33,6 +38,27 @@ const EventCreateEditDialog = (props: EventCreateEditDialogProps) => {
     handleCancel,
   } = props;
   const isMobile = useMediaQuery("(max-width: 600px)");
+
+  const [eventResponse, setEvent] = useState<EventResponse | undefined>(
+    undefined
+  );
+
+  const eventAPI = useRef(createApi("event") as Events);
+
+  useEffect(() => {
+    if (paramEventId) {
+      // Fetch event by id
+      console.log("Fetch event by id: ", paramEventId);
+      handleFetchEvent();
+    }
+  }, [paramEventId]);
+
+  const handleFetchEvent = async () => {
+    if (paramEventId) {
+      const response = await eventAPI.current.findById(paramEventId);
+      setEvent(response);
+    }
+  };
 
   return (
     <Dialog
@@ -65,13 +91,23 @@ const EventCreateEditDialog = (props: EventCreateEditDialogProps) => {
           <CloseRounded />
         </IconButton>
       </Box>
-      <EventCreateEditForm
-        isEdit={isEdit}
-        event={event}
-        newEvent={newEvent}
-        handleSubmit={handleSubmit}
-        handleCancel={handleCancel}
-      />
+      {paramEventId && eventResponse && (
+        <EventCreateEditForm
+          isEdit={true}
+          event={eventResponse}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancel}
+        />
+      )}
+      {!paramEventId && (
+        <EventCreateEditForm
+          isEdit={isEdit}
+          event={event}
+          newEvent={newEvent}
+          handleSubmit={handleSubmit}
+          handleCancel={handleCancel}
+        />
+      )}
     </Dialog>
   );
 };

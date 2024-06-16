@@ -20,7 +20,7 @@ import HiveLoadingSpinner from "components/HiveLoadingSpinner";
 import { HiveSearchValues } from "components/search/HiveSearch";
 import HiveSearch from "components/search/HiveSearchDialog";
 import { useContext, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createApi } from "utils/api/ApiCreator";
 import useAuthStore from "utils/stores/AuthStore";
@@ -40,6 +40,7 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
   const { note } = useSocketStore();
   const { activeNoteId, setActiveNoteId, hasUpdates, setHasUpdates } =
     useNoteStore();
+  const { noteId } = useParams();
 
   const navigate = useNavigate();
   const theme = useTheme();
@@ -59,6 +60,12 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
   }, [isStateReady, account]);
 
   useEffect(() => {
+    if (noteId) {
+      setActiveNoteId(noteId);
+    }
+  }, [window.location.pathname, noteId]);
+
+  useEffect(() => {
     if (hasUpdates) {
       getAllUserNotes();
       setHasUpdates(false);
@@ -67,7 +74,7 @@ const HivePublicNavbar = (props: HiveNavbarProps) => {
 
   useEffect(() => {
     getAllUserNotes();
-  }, [note]);
+  }, [note, noteId]);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);

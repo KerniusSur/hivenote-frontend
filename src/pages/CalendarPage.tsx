@@ -35,9 +35,21 @@ import { createApi } from "utils/api/ApiCreator";
 import { getDate } from "utils/ObjectUtils";
 import { surfaceDark, surfaceLight } from "utils/theme/colors";
 import { Notes } from "api/Notes";
+import { useNavigate, useParams } from "react-router-dom";
 
 moment.tz.setDefault("Europe/Vilnius");
 const CalendarPage = () => {
+  const { eventId } = useParams<{ eventId: string }>();
+  const [pageIsInEventViewMode, setPageIsInEventViewMode] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    if (eventId) {
+      setPageIsInEventViewMode(true);
+      console.log("Event id: ", eventId);
+    }
+  }, [eventId]);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [myEvents, setMyEvents] = useState<CalendarEvent[]>([]);
   const [selectedView, setSelectedView] = useState<View>("week");
@@ -75,6 +87,7 @@ const CalendarPage = () => {
   const noteAPI = useRef(createApi("note") as Notes);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const DnDCalendar = withDragAndDrop(Calendar);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getData();
@@ -86,7 +99,9 @@ const CalendarPage = () => {
 
   const getData = async () => {
     setIsLoading(true);
-
+    const userEvents = await eventAPI.current.findAllUserEvents();
+    mapEventsToCalendarEvents(userEvents);
+    setEvents(userEvents);
     setIsLoading(false);
   };
   const getEventResponses = async (dateFrom?: Date, dateTo?: Date) => {
@@ -197,6 +212,10 @@ const CalendarPage = () => {
     setSelectedCalendarEvent(undefined);
     setSelectedEventResponse(undefined);
     setCalendarEventCopy(undefined);
+
+    if (pageIsInEventViewMode && eventId) {
+      navigate(-1);
+    }
   };
 
   const { components, defaultDate, views, formats } = useMemo(
@@ -389,17 +408,29 @@ const CalendarPage = () => {
       !values.eventEnd ||
       !values.date
     ) {
+      console.error("Missing required fields");
       return;
     }
 
     if (
-      eventDialogOpen.objectId &&
-      events.some(
-        (eventResponse) => eventResponse.id === eventDialogOpen.objectId
-      )
+      (eventDialogOpen.objectId &&
+        events.some(
+          (eventResponse) => eventResponse.id === eventDialogOpen.objectId
+        )) ||
+      (pageIsInEventViewMode && eventId)
     ) {
+      let id = eventDialogOpen.objectId;
+      if (pageIsInEventViewMode && eventId) {
+        id = eventId;
+      }
+
+      if (!id) {
+        console.error("Event id is missing");
+        return;
+      }
+
       const eventUpdateRequest: EventUpdateRequest = {
-        id: eventDialogOpen.objectId,
+        id: id,
         title: values.title,
         description: values.description,
         location: values.location,
@@ -411,6 +442,7 @@ const CalendarPage = () => {
           values.date ?? values.eventEnd,
           values.eventEnd
         ).toISOString(),
+        noteIds: values.relatedToEvents,
       };
 
       await eventAPI.current.update(eventUpdateRequest);
@@ -419,6 +451,11 @@ const CalendarPage = () => {
       setSelectedCalendarEvent(undefined);
       setSelectedEventResponse(undefined);
       await getEventResponses();
+
+      if (eventId && pageIsInEventViewMode) {
+        navigate(`/calendar`);
+      }
+
       return;
     }
 
@@ -434,6 +471,7 @@ const CalendarPage = () => {
         values.date ?? values.eventEnd,
         values.eventEnd
       ).toISOString(),
+      noteIds: values.relatedToEvents,
     };
 
     await eventAPI.current.create(eventCreateRequest);
@@ -489,7 +527,7 @@ const CalendarPage = () => {
               compact
               startIcon={<AddRounded />}
               variant="contained"
-              text="New appointment"
+              text="New event"
               onClick={() => {
                 setEventDialogOpen({ open: true, objectId: null });
               }}
@@ -562,7 +600,7 @@ const CalendarPage = () => {
               }}
             >
               <HiveButton
-                text="Appointment"
+                text="Event"
                 startIcon={<AddRounded />}
                 onClick={() => {
                   setEventDialogOpen({ open: true, objectId: null });
@@ -571,15 +609,26 @@ const CalendarPage = () => {
             </Box>
           </Hidden>
         </Box>
-        {eventDialogOpen.open && (
+        {!pageIsInEventViewMode && eventDialogOpen.open && (
           <EventCreateEditDialog
             open={eventDialogOpen.open}
             isEdit={eventDialogOpen.objectId !== "temp"}
-            dialogTitle={
-              eventDialogOpen.objectId ? "Edit appointment" : "New appointment"
-            }
+            dialogTitle={eventDialogOpen.objectId ? "Edit event" : "New event"}
             event={selectedEventResponse}
             newEvent={newCalendarEvent}
+            handleSubmit={handleSubmit}
+            handleClose={handleDialogClose}
+            handleCancel={handleDialogClose}
+          />
+        )}
+        {pageIsInEventViewMode && (
+          <EventCreateEditDialog
+            paramEventId={eventId}
+            open={true}
+            isEdit={true}
+            dialogTitle={"Edit event"}
+            // event={selectedEventResponse}
+            // newEvent={newCalendarEvent}
             handleSubmit={handleSubmit}
             handleClose={handleDialogClose}
             handleCancel={handleDialogClose}
