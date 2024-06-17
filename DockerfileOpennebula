@@ -18,7 +18,7 @@ FROM nginx:latest
 
 # Set the environment variables
 ARG NODE_ENV=opennebula
-ENV NODE_ENV ${NODE_ENV}
+ENV NODE_ENV=$NODE_ENV
 
 # Copy the build output to replace the default nginx contents.
 COPY --from=build /usr/local/app/dist /usr/share/nginx/html

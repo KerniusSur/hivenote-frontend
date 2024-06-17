@@ -39,6 +39,8 @@ const HiveSelect = (props: Props) => {
       return;
     }
 
+    console.log(value);
+
     helpers.setValue(value);
   };
 
@@ -82,8 +84,9 @@ const HiveSelect = (props: Props) => {
               width: "100%",
             }}
           >
-            {selected[0].length > 0 &&
-              selected[0].map((value: string, index: number) => (
+            {other.multiple &&
+              selected[0]?.length > 0 &&
+              selected[0]?.map((value: string, index: number) => (
                 <Box
                   key={value}
                   sx={{
@@ -98,6 +101,14 @@ const HiveSelect = (props: Props) => {
                   />
                 </Box>
               ))}
+            {!other.multiple && (
+              <>
+                {
+                  options.find((option) => (option.value as any) === selected)
+                    ?.label
+                }
+              </>
+            )}
           </Box>
         )}
       >
