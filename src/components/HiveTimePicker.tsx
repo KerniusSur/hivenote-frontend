@@ -28,7 +28,7 @@ const HiveTimePicker = (props: HiveTimePickerProps) => {
   const [field, meta, helper] = useField(label);
   const isMobile = useMediaQuery("(max-width: 600px)");
   const [value, setValue] = useState<string | null | undefined>(
-    dayjs(field.value).toISOString()
+    field.value ? dayjs(field.value).toISOString() : null
   );
 
   const handleChange = (newValue: string | null | undefined) => {

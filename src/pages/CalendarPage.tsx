@@ -453,7 +453,7 @@ const CalendarPage = () => {
       await getEventResponses();
 
       if (eventId && pageIsInEventViewMode) {
-        navigate(`/calendar`);
+        window.location.href = "/calendar";
       }
 
       return;
@@ -522,7 +522,7 @@ const CalendarPage = () => {
           }}
         >
           <Typography variant="h2">Calendar</Typography>
-          {!isMobile && (
+          {/* {!isMobile && (
             <HiveButton
               compact
               startIcon={<AddRounded />}
@@ -532,7 +532,7 @@ const CalendarPage = () => {
                 setEventDialogOpen({ open: true, objectId: null });
               }}
             />
-          )}
+          )} */}
         </Box>
         <CalendarHeader
           selectedDate={selectedDate}

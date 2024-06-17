@@ -177,13 +177,13 @@ const RegisterLoginPage = (props: RegisterLoginPageProps) => {
               text={isRegisterPage ? "Sign up" : "Log in"}
               type="submit"
             />
-            <HiveButton
+            {/* <HiveButton
               variant="outlined"
               text={
                 isRegisterPage ? "Sign up with Google" : "Log in with Google"
               }
               startIcon={<Google />}
-            />
+            /> */}
           </Form>
         </Formik>
       </Box>

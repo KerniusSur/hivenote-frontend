@@ -1,12 +1,18 @@
 import { Box, CssBaseline, styled } from "@mui/material";
 import HivePublicNavbar from "components/HiveNavbar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import useAuthStore from "utils/stores/AuthStore";
 
 const drawerWidth = 320;
 
 const PublicLayout = () => {
+  const authStore = useAuthStore();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsDrawerOpen(!!authStore.account);
+  }, [authStore.account]);
 
   return (
     <OutsideContainer>
